@@ -58,7 +58,6 @@ public  class DeviceFactory {
 
     public JSONObject getDeviceCtrlCmd(String device, String cmd){
         JSONObject jsonDevice = deviceCtrlMap.get(device);
-        System.out.println(jsonDevice);
         if(jsonDevice==null){
             return notExistDeviceObj;
         }
