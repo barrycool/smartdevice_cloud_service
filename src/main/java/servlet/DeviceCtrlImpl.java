@@ -25,10 +25,19 @@ public class DeviceCtrlImpl {
     }
 
 
-    private String verifyUserDeviceStatus(JSONObject jsonReq){
+    public String strCatUserDeviceStatusRedisKey(JSONObject jsonReq){
         String userId = jsonReq.getString("user_id");
         String device = jsonReq.getString("device");
-        String redisKey = Global.userDeviceKey + userId + ":" +  device;
+        if(userId==null || device==null){
+            return "";
+        }
+        return Global.userDeviceKey + userId + ":" +  device;
+    }
+
+
+    private String verifyUserDeviceStatus(JSONObject jsonReq){
+
+        String redisKey = strCatUserDeviceStatusRedisKey(jsonReq);
         if(redisClient!=null) {
             return redisClient.get(redisKey);
         }
@@ -48,10 +57,8 @@ public class DeviceCtrlImpl {
     }
 
     public void set(JSONObject jsonReq){
-        String userId = jsonReq.getString("user_id");
-        String device = jsonReq.getString("device");
         String status = jsonReq.getString("status");
-        String redisKey = Global.userDeviceKey + userId + ":" +  device;
+        String redisKey = strCatUserDeviceStatusRedisKey(jsonReq);
         KafkaClient.setDeviceStatus(redisKey, status, Global.defaultOverTime);
     }
 
