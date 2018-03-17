@@ -15,11 +15,11 @@ import java.io.*;
 /**
  * Created by fanyuanyuan on 2018/3/17.
  */
-public class UserAuthServlet extends HttpServlet {
-        private static final Logger logger = LoggerFactory.getLogger(UserAuthServlet.class);
+public class UserServlet extends HttpServlet {
+        private static final Logger logger = LoggerFactory.getLogger(UserServlet.class);
 
 
-        private UserAuthImpl userAuth = new UserAuthImpl();
+        private UserCtrlImpl userCtrl = new UserCtrlImpl();
 
         private void print(JSONObject queryResult, HttpServletResponse response){
             try {
@@ -52,12 +52,19 @@ public class UserAuthServlet extends HttpServlet {
                 String type = jsonReq.getString("rt");
                 String addr = jsonReq.getString("addr");
                 boolean stat = false;
-                if(type.equals("send")){
-                    stat = userAuth.sendCode(addr);
+                if(type==null || addr==null){
+                    stat = false;
+                }else if(type.equals("send")){
+                    stat = userCtrl.sendCode(addr);
                 }else if(type.equals("verify")){
                     String code = jsonReq.getString("code");
-
-                    stat = userAuth.verify(addr, code);
+                    stat = userCtrl.verify(addr, code);
+                }else if(type.equals("update")){
+                    userCtrl.updateUserInfo(jsonReq);
+                    stat = true;
+                }else if(type.equals("insert")){
+                    userCtrl.insertNewUser(jsonReq);
+                    stat = true;
                 }
                 queryResult.put("status", stat);
                 print(queryResult, response);
