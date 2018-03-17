@@ -5,13 +5,13 @@ import com.alibaba.fastjson.JSONObject;
 import log.SaveTraceLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import servlet.impl.DeviceCtrlImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.net.URLDecoder;
 
 /**
  * Created by yuanyuanfan on 2018/1/23.

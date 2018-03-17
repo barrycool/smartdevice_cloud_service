@@ -15,6 +15,7 @@ public class Global {
     public static final String userDeviceKey = "user_device:";
 
     public static final int defaultOverTime = 3600;
+    public static final String  userId = "user_id";
 
     public static void checkDir(String dirname) {
         try {

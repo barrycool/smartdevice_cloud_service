@@ -1,4 +1,4 @@
-package servlet;
+package servlet.impl;
 
 import client.KafkaClient;
 import client.MongoXClient;

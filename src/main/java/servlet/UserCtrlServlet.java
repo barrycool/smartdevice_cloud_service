@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import log.SaveTraceLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import servlet.impl.UserCtrlImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -15,8 +16,8 @@ import java.io.*;
 /**
  * Created by fanyuanyuan on 2018/3/17.
  */
-public class UserServlet extends HttpServlet {
-        private static final Logger logger = LoggerFactory.getLogger(UserServlet.class);
+public class UserCtrlServlet extends HttpServlet {
+        private static final Logger logger = LoggerFactory.getLogger(UserCtrlServlet.class);
 
 
         private UserCtrlImpl userCtrl = new UserCtrlImpl();

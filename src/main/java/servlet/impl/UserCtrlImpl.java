@@ -1,4 +1,4 @@
-package servlet;
+package servlet.impl;
 
 import client.MongoXClient;
 import com.alibaba.fastjson.JSONObject;
@@ -90,6 +90,20 @@ public class UserCtrlImpl {
 
     public static void main(String[] argc){
         UserCtrlImpl userCtrl = new UserCtrlImpl();
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("user_id", "1234");
+        jsonObject.put("user_name", "meizi");
+        jsonObject.put("passwd", "meizi1234");
+        jsonObject.put("phone", "12121");
+//        userCtrl.insertNewUser(jsonObject);
+
+        JSONObject jsonUpdate = new JSONObject();
+        jsonUpdate.put("phone", "22222");
+        jsonUpdate.put("user_id", "1234");
+        userCtrl.updateUserInfo(jsonObject);
+
+        System.out.println(userCtrl.get("1234", "phone"));
     }
 
 

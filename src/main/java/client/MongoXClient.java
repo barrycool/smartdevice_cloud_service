@@ -1,9 +1,7 @@
 package client;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoClientURI;
+import com.alibaba.fastjson.JSONObject;
+import com.mongodb.*;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -12,6 +10,7 @@ import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.Global;
 
 import java.net.InetAddress;
 import java.util.*;
@@ -27,28 +26,29 @@ public class MongoXClient {
     private String host;
     private Integer port;
 
-    private String user = "mongo";
-    private String auth;
+    private String user;
+    private String passwd;
 
     private MongoClient client;
 
-    private final String userProfTable = "zs_user_info";
+    private final String userTable = "user";
+    private final String userDB = "user_info";
 
     private HashMap<String, IDC> idcMap = new HashMap();
 
     public IDC of(String k) {
         IDC idc = idcMap.get(k);
         if (idc == null) {
-            idc = IDC.test;
+            idc = IDC.Other;
         }
         return idc;
     }
 
     public enum IDC {
-        bjcc,
-        shbt,
-        bjyt,
-        test
+        China,
+        Korea,
+        America,
+        Other
     }
 
     private static final MongoXClient instance = new MongoXClient();
@@ -62,19 +62,19 @@ public class MongoXClient {
     }
 
     public void init() {
-        idcMap.put("bjcc", IDC.bjcc);
-        idcMap.put("shbt", IDC.shbt);
-        idcMap.put("bjyt", IDC.bjyt);
-        idcMap.put("test", IDC.test);
+        idcMap.put("china", IDC.China);
+        idcMap.put("korea", IDC.Korea);
+        idcMap.put("america", IDC.America);
+        idcMap.put("other", IDC.Other);
 
         getConfig(getIDC());
 
-        createMongoClient();
+        createMongoClientV2();
     }
 
 
     public void createMongoClient() {
-        String uri = "mongodb://" + user + ":" + auth + "@" + host + ":" + port + "/admin";
+        String uri = "mongodb://" + user + ":" + passwd + "@" + host + ":" + port + "/admin";
         logger.info("mongoURI={}", uri);
 
         MongoClientOptions.Builder build = new MongoClientOptions.Builder();
@@ -86,8 +86,29 @@ public class MongoXClient {
         client = new MongoClient(new MongoClientURI(uri, build));
         if (client == null) {
             logger.error("create MongoXClient failed");
+            System.out.println("create MongoXClient failed");
         }
     }
+
+    public  void createMongoClientV2(){
+        try {
+            MongoCredential credential = MongoCredential.createCredential(user, userDB, passwd.toCharArray());
+            ServerAddress serverAddress;
+            serverAddress = new ServerAddress(host, port);
+            List<ServerAddress> addrs = new ArrayList<ServerAddress>();
+            addrs.add(serverAddress);
+            List<MongoCredential> credentials = new ArrayList<MongoCredential>();
+            credentials.add(credential);
+            client = new MongoClient(addrs, credentials);
+            if (client == null) {
+                logger.error("create MongoXClient failed");
+                System.out.println("create MongoXClient failed");
+            }
+        } catch (Exception e) {
+            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+        }
+    }
+
 
     public void close() {
         client.close();
@@ -101,26 +122,19 @@ public class MongoXClient {
     }
 
 
-    private String getDBName(String m2) {
-        if (m2 == null || m2.length() != 32) {
-            return null;
-        }
-        BasicDBObject basicDBObject = new BasicDBObject();
-        basicDBObject.append("_id", m2);
-        String dbPrefix = "zs_user_m2_";
-        String dbName = dbPrefix + m2.charAt(m2.length() - 1);
-        return dbName;
+    public String getDBName() {
+       return userDB;
     }
 
     private MongoCursor<Document> findIter(String m2, String k, Object v, final String... fieldNames) {
         BasicDBObject queryObj = new BasicDBObject();
         queryObj.append(k, v);
 
-        String dbName = getDBName(m2);
+        String dbName = getDBName();
         if(dbName==null){
             return null;
         }
-        MongoCollection collect = getDataBase(dbName).getCollection(userProfTable);
+        MongoCollection collect = getDataBase(dbName).getCollection(userTable);
         FindIterable<Document> findIterable =
                 collect.find(queryObj).projection(
                         fields(
@@ -131,12 +145,12 @@ public class MongoXClient {
 
     public MongoCursor<Document> findIterByM2(String m2, final String... fieldNames) {
         BasicDBObject queryObj = new BasicDBObject();
-        queryObj.append("_id", m2);
-        String dbName = getDBName(m2);
+        queryObj.append(Global.userId, m2);
+        String dbName = getDBName();
         if(dbName==null){
             return null;
         }
-        MongoCollection collect = getDataBase(dbName).getCollection(userProfTable);
+        MongoCollection collect = getDataBase(dbName).getCollection(userTable);
         FindIterable<Document> findIterable =
                 collect.find(queryObj).projection(
                         fields(
@@ -145,38 +159,48 @@ public class MongoXClient {
         return findIterable.iterator();
     }
 
-    private void updateOne(String m2, String field){
+    public void updateDoc(JSONObject updateInfo){
+
+        String userId = updateInfo.getString(Global.userId);
+
         BasicDBObject queryObj = new BasicDBObject();
-        queryObj.append("_id", m2);
-        String dbName = getDBName(m2);
+        queryObj.append(Global.userId, userId);
+        String dbName = getDBName();
         if(dbName==null){
             return ;
         }
 
         Document filter = new Document();
-        filter.append("_id", m2);
+        filter.append(Global.userId, userId);
 
         Document updateObj = new Document();
-        updateObj.append("_id", m2);
+        updateObj.append(Global.userId, userId);
 
-        MongoCollection collect = getDataBase(dbName).getCollection(userProfTable);
+        MongoCollection collect = getDataBase(dbName).getCollection(userTable);
         FindIterable<Document> findIterable = collect.find(queryObj);
         MongoCursor<Document> cur = findIterable.iterator();
         while (cur.hasNext()) {
             Document doc = cur.next();
             Set<String> kset = doc.keySet();
             for (String key : kset) {
-                if(field.equals(key)){
-                    continue;
+                String v = updateInfo.getString(key);
+                if(v!=null){
+                    updateObj.put(key, v);
+                }else{
+                    updateObj.put(key, doc.get(key));
                 }
-                updateObj.put(key, doc.get(key));
             }
         }
-
-        System.out.println(updateObj.toString());
-        UpdateResult result = collect.replaceOne(filter, updateObj);
+//        UpdateResult result = collect.replaceOne(filter, updateObj);
+        collect.findOneAndUpdate(filter, updateObj);
 //        logger.info("matched count = {}", result.getMatchedCount());
-        System.out.println("matched count = " +  result.getMatchedCount());
+//        System.out.println("matched count = " +  result.getMatchedCount());
+    }
+
+    public void insertDoc(Document updateObj){
+        String dbName = getDBName();
+        MongoCollection collect = getDataBase(dbName).getCollection(userTable);
+        collect.insertOne(updateObj);
     }
 
     /**
@@ -195,7 +219,7 @@ public class MongoXClient {
 
         }
 
-        String idc = "test";
+        String idc = "other";
         String[] parts = addr.split("\\.");
         if (parts.length > 2) {
             idc = parts[2];
@@ -217,19 +241,35 @@ public class MongoXClient {
      */
     private void getConfig(IDC idc) {
         switch (idc) {
-            case bjcc:
-
+            case China:
+                host = "www.ai-keys.com";
+                port = 27017;
+                user = "pangzi";
+                passwd = "pangzi123";
                 break;
-            case shbt:
-
+            case Korea:
+                host = "www.ai-keys.com";
+                port = 27017;
+                user = "pangzi";
+                passwd = "pangzi123";
                 break;
-            case bjyt:
-
+            case America:
+                host = "www.ai-keys.com";
+                port = 27017;
+                user = "pangzi";
+                passwd = "pangzi123";
                 break;
             default:
+                host = "www.ai-keys.com";
+                port = 27017;
+                user = "pangzi";
+                passwd = "pangzi123";
+                break;
 
         }
     }
+
+
 
     public static void main(String[] argc){
         MongoXClient mongoXClient = MongoXClient.getInstance();
