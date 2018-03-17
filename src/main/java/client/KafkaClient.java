@@ -15,12 +15,4 @@ public class KafkaClient extends Thread{
     public static void setDeviceStatus(String key, String v, int overTime) {
         redisClient.put(key, v, overTime);
     }
-
-    public static void main(String[] argc){
-        KafkaClient.setDeviceStatus("12345", "tv", 3600);
-        while (true){
-
-        }
-    }
-
 }
