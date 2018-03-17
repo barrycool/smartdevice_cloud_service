@@ -1,8 +1,8 @@
 #/bin/bash
 
-CODE_HOME=/home/q/system/
+CODE_HOME=/Users/fanyuanyuan/workspace/smartdevice_cloud_service
 JETTY_HOME=/opt/jetty
-cd $HOME
+cd $CODE_HOME
 rm -rf $CODE_HOME/target
 rm -rf $JETTY_HOME/webapps/*
 mvn package
