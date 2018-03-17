@@ -19,13 +19,15 @@ public class DeviceCtrlImpl {
     private DeviceFactory deviceFactory = DeviceFactory.getInstance();
 
 
-    private static JSONObject deviceStatus = new JSONObject();
+    private static JSONObject deviceOpenStatus = new JSONObject();
+    private static JSONObject deviceClosedStatus = new JSONObject();
     static{
-        deviceStatus.put("status", "off");
+        deviceOpenStatus.put("status", "off");
+        deviceClosedStatus.put("status", "on");
     }
 
 
-    public String strCatUserDeviceStatusRedisKey(JSONObject jsonReq){
+    public String strCatUserdeviceOpenStatusRedisKey(JSONObject jsonReq){
         String userId = jsonReq.getString("user_id");
         String device = jsonReq.getString("device");
         if(userId==null || device==null){
@@ -35,9 +37,9 @@ public class DeviceCtrlImpl {
     }
 
 
-    private String verifyUserDeviceStatus(JSONObject jsonReq){
+    private String verifyUserdeviceOpenStatus(JSONObject jsonReq){
 
-        String redisKey = strCatUserDeviceStatusRedisKey(jsonReq);
+        String redisKey = strCatUserdeviceOpenStatusRedisKey(jsonReq);
         if(redisClient!=null) {
             return redisClient.get(redisKey);
         }
@@ -46,20 +48,28 @@ public class DeviceCtrlImpl {
 
     public JSONObject process(JSONObject jsonReq){
 
-        String status = verifyUserDeviceStatus(jsonReq);
+        String status = verifyUserdeviceOpenStatus(jsonReq);
 
         if(status!=null && status.equals("1")){
             String device = jsonReq.getString("device");
             String cmd = jsonReq.getString("cmd");
             return deviceFactory.getDeviceCtrlCmd(device, cmd);
         }
-        return deviceStatus;
+        return deviceClosedStatus;
     }
 
     public void set(JSONObject jsonReq){
         String status = jsonReq.getString("status");
-        String redisKey = strCatUserDeviceStatusRedisKey(jsonReq);
+        String redisKey = strCatUserdeviceOpenStatusRedisKey(jsonReq);
         KafkaClient.setDeviceStatus(redisKey, status, Global.defaultOverTime);
+    }
+
+    public JSONObject get(JSONObject jsonReq){
+        String status = verifyUserdeviceOpenStatus(jsonReq);
+        if(status!=null && status.equals("1")){
+            return deviceOpenStatus;
+        }
+        return deviceClosedStatus;
     }
 
 

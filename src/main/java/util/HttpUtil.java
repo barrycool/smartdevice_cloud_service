@@ -22,7 +22,6 @@ import java.net.URLConnection;
  */
 public class HttpUtil {
     private static final Logger logger = LoggerFactory.getLogger(HttpUtil.class);
-
     /**
      * 向指定URL发送GET方法的请求
      *

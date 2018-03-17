@@ -15,8 +15,8 @@ import java.io.*;
 /**
  * Created by yuanyuanfan on 2018/1/23.
  */
-public class DeviceSetServlet extends HttpServlet {
-    private static final Logger logger = LoggerFactory.getLogger(DeviceSetServlet.class);
+public class DeviceGetServlet extends HttpServlet {
+    private static final Logger logger = LoggerFactory.getLogger(DeviceGetServlet.class);
 
     private DeviceCtrlImpl deviceCtrl = new DeviceCtrlImpl();
 
@@ -47,7 +47,7 @@ public class DeviceSetServlet extends HttpServlet {
                 print(queryResult, response);
                 return;
             }
-            deviceCtrl.set(jsonReq);
+            queryResult = deviceCtrl.get(jsonReq);
             print(queryResult, response);
         } catch (Exception e) {
             e.printStackTrace();
