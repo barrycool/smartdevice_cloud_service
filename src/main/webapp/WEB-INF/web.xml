@@ -31,7 +31,7 @@
     </servlet>
     <servlet>
         <servlet-name>send</servlet-name>
-        <servlet-class>servlet.UserAuthServlet</servlet-class>
+        <servlet-class>servlet.UserCtrlServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
