@@ -6,7 +6,7 @@ public class KafkaClient extends Thread{
 
     private static RedisClient redisClient = RedisFactory.getClient(RedisFactory.RedisKey.APP);
 
-    public static CompletableFuture<Void> setDeviceStatusSync(String key, String v, int overTime) {
+    public static CompletableFuture<Void> setDeviceStatusEx(String key, String v, int overTime) {
         return CompletableFuture.runAsync(() -> {
             redisClient.put(key, v, overTime);
         });
