@@ -84,7 +84,7 @@ public class RedisFactory {
         } catch (Exception e) {
 
         }
-        String idc = "zwt";
+        String idc = "other";
         String[] parts = addr.split("\\.");
         if (parts.length < 3) {
             return idc;
