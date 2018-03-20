@@ -11,6 +11,7 @@ import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.Global;
+import util.UtilKey;
 
 import java.net.InetAddress;
 import java.util.*;
@@ -145,7 +146,7 @@ public class MongoXClient {
 
     public MongoCursor<Document> findIterByM2(String m2, final String... fieldNames) {
         BasicDBObject queryObj = new BasicDBObject();
-        queryObj.append(Global.userId, m2);
+        queryObj.append(UtilKey.userId, m2);
         String dbName = getDBName();
         if(dbName==null){
             return null;
@@ -161,20 +162,20 @@ public class MongoXClient {
 
     public void updateDoc(JSONObject updateInfo){
 
-        String userId = updateInfo.getString(Global.userId);
+        String userId = updateInfo.getString(UtilKey.userId);
 
         BasicDBObject queryObj = new BasicDBObject();
-        queryObj.append(Global.userId, userId);
+        queryObj.append(UtilKey.userId, userId);
         String dbName = getDBName();
         if(dbName==null){
             return ;
         }
 
         Document filter = new Document();
-        filter.append(Global.userId, userId);
+        filter.append(UtilKey.userId, userId);
 
         Document updateObj = new Document();
-        updateObj.append(Global.userId, userId);
+        updateObj.append(UtilKey.userId, userId);
 
         MongoCollection collect = getDataBase(dbName).getCollection(userTable);
         FindIterable<Document> findIterable = collect.find(queryObj);

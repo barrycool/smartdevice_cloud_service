@@ -12,12 +12,6 @@ public class Global {
     public static final String ENCODE = "utf-8";
     public static final String TAB = "\t";
 
-    public static final String userDeviceKey = "user_device:";
-
-    public static final int defaultOverTime = 3600;
-    public static final String  userId = "user_id";
-    public static final String  deviceId = "device_id";
-
     public static void checkDir(String dirname) {
         try {
             File f = new File(dirname);

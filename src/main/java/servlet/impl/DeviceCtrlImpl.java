@@ -1,12 +1,11 @@
 package servlet.impl;
 
-import client.KafkaClient;
-import client.MongoXClient;
+import client.RedisTools;
 import client.RedisClient;
 import client.RedisFactory;
 import com.alibaba.fastjson.JSONObject;
 import device.DeviceFactory;
-import util.Global;
+import util.UtilKey;
 
 /**
  * Created by fanyuanyuan on 2018/3/10.
@@ -27,21 +26,21 @@ public class DeviceCtrlImpl {
     }
 
 
-    public String strCatUserdeviceOpenStatusRedisKey(JSONObject jsonReq){
-        String userId = jsonReq.getString("user_id");
-        String deviceId = jsonReq.getString(Global.deviceId);
-        if(userId==null || deviceId==null){
-            return "";
+    public String getUserDeviceRedisKey(JSONObject jsonReq){
+        String userId = jsonReq.getString(UtilKey.userId);
+        String deviceId = jsonReq.getString(UtilKey.deviceId);
+        if(userId==null || deviceId==null || userId.length()==0 || deviceId.length()==0){
+            return null;
         }
-        return Global.userDeviceKey + userId + ":" +  deviceId;
+        return UtilKey.redis_key_prefix_user_device_status + userId + ":" +  deviceId;
     }
 
 
-    private String verifyUserdeviceOpenStatus(JSONObject jsonReq){
+    private String getUserDeviceStatus(JSONObject jsonReq){
 
         String status = "0";
-        String redisKey = strCatUserdeviceOpenStatusRedisKey(jsonReq);
-        if(redisClient!=null) {
+        String redisKey = getUserDeviceRedisKey(jsonReq);
+        if(redisClient!=null || redisKey!=null) {
             status =  redisClient.get(redisKey);
         }
         if(status==null){
@@ -52,24 +51,36 @@ public class DeviceCtrlImpl {
 
     public JSONObject process(JSONObject jsonReq){
 
-        String status = verifyUserdeviceOpenStatus(jsonReq);
+        String status = getUserDeviceStatus(jsonReq);
 
         if(status.equals("1")){
-            String device = jsonReq.getString(Global.deviceId);
+            String device = jsonReq.getString(UtilKey.deviceId);
             String cmd = jsonReq.getString("cmd");
             return deviceFactory.getDeviceCtrlCmd(device, cmd);
         }
         return deviceClosedStatus;
     }
 
-    public void set(JSONObject jsonReq){
+    public void setDeviceStatus(JSONObject jsonReq){
         String status = jsonReq.getString("status");
-        String redisKey = strCatUserdeviceOpenStatusRedisKey(jsonReq);
-        KafkaClient.setDeviceStatus(redisKey, status, Global.defaultOverTime);
+        String redisKey = getUserDeviceRedisKey(jsonReq);
+        if(redisKey==null || redisKey.length()==0){
+            return;
+        }
+        RedisTools.set(redisKey, status, UtilKey.user_device_status_over_time);
+    }
+
+    public void setDeviceList(JSONObject jsonReq){
+        String status = jsonReq.getString("status");
+        String redisKey = getUserDeviceRedisKey(jsonReq);
+        if(redisKey==null || redisKey.length()==0){
+            return;
+        }
+        RedisTools.set(redisKey, status, UtilKey.user_device_list_over_time);
     }
 
     public JSONObject get(JSONObject jsonReq){
-        String status = verifyUserdeviceOpenStatus(jsonReq);
+        String status = getUserDeviceStatus(jsonReq);
         if(status.equals("1")){
             return deviceOpenStatus;
         }
@@ -79,15 +90,11 @@ public class DeviceCtrlImpl {
     public static void main(String[] argc){
         DeviceCtrlImpl deviceCtrl = new DeviceCtrlImpl();
         JSONObject jsonReq = new JSONObject();
-        jsonReq.put("user_id", "Fy4TG6j");
-        jsonReq.put(Global.deviceId, "tv");
-//        jsonReq.put("status", "1");
+        jsonReq.put(UtilKey.deviceId, "12321");
+        jsonReq.put("status", "0");
 
-//        deviceCtrl.set(jsonReq);
-
-        while(true){
-            System.out.println(deviceCtrl.get(jsonReq));
-        }
+        deviceCtrl.setDeviceStatus(jsonReq);
+        System.out.println(deviceCtrl.get(jsonReq));
     }
 
 

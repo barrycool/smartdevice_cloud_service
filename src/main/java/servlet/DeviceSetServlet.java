@@ -48,7 +48,7 @@ public class DeviceSetServlet extends HttpServlet {
                 print(queryResult, response);
                 return;
             }
-            deviceCtrl.set(jsonReq);
+            deviceCtrl.setDeviceStatus(jsonReq);
             print(queryResult, response);
         } catch (Exception e) {
             e.printStackTrace();

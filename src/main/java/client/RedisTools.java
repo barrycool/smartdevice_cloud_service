@@ -2,7 +2,7 @@ package client;
 
 import java.util.concurrent.CompletableFuture;
 
-public class KafkaClient extends Thread{
+public class RedisTools extends Thread{
 
     private static RedisClient redisClient = RedisFactory.getClient(RedisFactory.RedisKey.APP);
 
@@ -12,7 +12,7 @@ public class KafkaClient extends Thread{
         });
     }
 
-    public static void setDeviceStatus(String key, String v, int overTime) {
+    public static void set(String key, String v, int overTime) {
         redisClient.put(key, v, overTime);
     }
 }
