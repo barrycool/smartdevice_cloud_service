@@ -136,7 +136,7 @@ public class RedisClient {
             jd = pool.getResource();
             value = jd.get(key);
         } catch (Exception e) {
-            logger.error("jedis get {} failed: {}", key, e.toString());
+            logger.error("jedis getDevStatus {} failed: {}", key, e.toString());
         } finally {
             if (jd != null) {
                 jd.close();
@@ -175,7 +175,7 @@ public class RedisClient {
             jd = pool.getResource();
             v = jd.get(key);
         } catch (Exception e) {
-            logger.error("jedis get {} failed: {}", key, e.toString());
+            logger.error("jedis getDevStatus {} failed: {}", key, e.toString());
         } finally {
             if (jd != null) {
                 jd.close();

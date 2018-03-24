@@ -6,12 +6,10 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.Global;
-import util.UtilKey;
+import util.ConstKey;
 
 import java.net.InetAddress;
 import java.util.*;
@@ -146,7 +144,7 @@ public class MongoXClient {
 
     public MongoCursor<Document> findIterByM2(String m2, final String... fieldNames) {
         BasicDBObject queryObj = new BasicDBObject();
-        queryObj.append(UtilKey.userId, m2);
+        queryObj.append(ConstKey.userId, m2);
         String dbName = getDBName();
         if(dbName==null){
             return null;
@@ -162,20 +160,20 @@ public class MongoXClient {
 
     public void updateDoc(JSONObject updateInfo){
 
-        String userId = updateInfo.getString(UtilKey.userId);
+        String userId = updateInfo.getString(ConstKey.userId);
 
         BasicDBObject queryObj = new BasicDBObject();
-        queryObj.append(UtilKey.userId, userId);
+        queryObj.append(ConstKey.userId, userId);
         String dbName = getDBName();
         if(dbName==null){
             return ;
         }
 
         Document filter = new Document();
-        filter.append(UtilKey.userId, userId);
+        filter.append(ConstKey.userId, userId);
 
         Document updateObj = new Document();
-        updateObj.append(UtilKey.userId, userId);
+        updateObj.append(ConstKey.userId, userId);
 
         MongoCollection collect = getDataBase(dbName).getCollection(userTable);
         FindIterable<Document> findIterable = collect.find(queryObj);

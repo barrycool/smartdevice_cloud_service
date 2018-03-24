@@ -16,7 +16,7 @@ public class MySqlClient {
         try {
             conn = DriverManager.getConnection(conn_str);
         } catch (SQLException e) {
-            logger.error("get mysql connection is fail !");
+            logger.error("getDevStatus mysql connection is fail !");
         }
 
         return conn;
@@ -43,7 +43,7 @@ public class MySqlClient {
                 }
 
             } catch (SQLException e) {
-                logger.error("get mysql data is fail !");
+                logger.error("getDevStatus mysql data is fail !");
             }finally {
                 close(conn);
             }
