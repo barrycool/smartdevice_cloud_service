@@ -30,14 +30,14 @@ public class DeviceSetServlet extends HttpServlet {
         long start = System.currentTimeMillis();
         try {
 
-            String type = jsonReq.getString("type");
-
             String nameSpace = jsonReq.getString(ConstKey.nameSpace);
             JSONObject jsonResult = new JSONObject();
             if(nameSpace.equals("Alexa.PowerController")){
                 jsonResult = deviceCtrl.setDevStatus(jsonReq);
             }else if(nameSpace.equals("Alexa.AddDevice")){
                 jsonResult = deviceCtrl.addDevice(jsonReq);
+            }else if(nameSpace.equals("Alexa.UserToken")){
+                jsonResult = deviceCtrl.setUserToken(jsonReq);
             }
             PrintUtil.print(jsonResult, response);
         } catch (Exception e) {

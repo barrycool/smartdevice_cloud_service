@@ -83,7 +83,7 @@ public class QueryPack {
             JSONObject jsonReq = JSON.parseObject(ctx);
             return jsonReq;
         } catch (Exception e) {
-            logger.error("request failed, error={}", e);
+            logger.error("request failed, ERROR={}", e);
             return null;
         }
     }

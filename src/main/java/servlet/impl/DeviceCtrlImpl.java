@@ -33,7 +33,7 @@ public class DeviceCtrlImpl {
     }
 
 
-    public String getRedisValueKey4DevStatus(JSONObject jsonReq){
+    public String getRedisKey_DevStatus(JSONObject jsonReq){
         String userId = getUserId(jsonReq);
         String deviceId = jsonReq.getString(ConstKey.deviceId);
         if(userId==null || deviceId==null || userId.length()==0 || deviceId.length()==0){
@@ -42,7 +42,7 @@ public class DeviceCtrlImpl {
         return ConstKey.redis_key_prefix_user_device_status + userId + ":" +  deviceId;
     }
 
-    public String getRedisValueKey4UserToken(JSONObject jsonReq){
+    public String getRedisKey_UserToken(JSONObject jsonReq){
         String token = jsonReq.getString(ConstKey.token);
         if(StringUtil.isEmpty(token)){
             return null;
@@ -50,7 +50,7 @@ public class DeviceCtrlImpl {
         return ConstKey.redis_key_prefix_user_token +  token;
     }
 
-    public String getRedisValueKey4DevList(JSONObject jsonReq){
+    public String getRedisKey_DevList(JSONObject jsonReq){
         String userId = getUserId(jsonReq);
         String deviceId = jsonReq.getString(ConstKey.deviceId);
         if(userId==null || deviceId==null || userId.length()==0 || deviceId.length()==0){
@@ -72,7 +72,7 @@ public class DeviceCtrlImpl {
 
     public JSONObject setDevStatus(JSONObject jsonReq){
         String name = jsonReq.getString(ConstKey.name);
-        String redisKey = getRedisValueKey4DevStatus(jsonReq);
+        String redisKey = getRedisKey_DevStatus(jsonReq);
 
         JSONObject jsonResult = new JSONObject();
         String deviceId = jsonReq.getString(ConstKey.deviceId);
@@ -88,7 +88,7 @@ public class DeviceCtrlImpl {
     }
 
     public JSONObject getDevStatus(JSONObject jsonReq){
-        String redisKey = getRedisValueKey4DevStatus(jsonReq);
+        String redisKey = getRedisKey_DevStatus(jsonReq);
         String redisValue = getRedisValue(redisKey);
 
         JSONObject jsonCtrl = new JSONObject();
@@ -114,17 +114,18 @@ public class DeviceCtrlImpl {
         return jsonResult;
     }
 
-    public void setUserToken(JSONObject jsonReq){
+    public JSONObject setUserToken(JSONObject jsonReq){
         String userId = getUserId(jsonReq);
-        String redisKey = getRedisValueKey4UserToken(jsonReq);
+        String redisKey = getRedisKey_UserToken(jsonReq);
         if(StringUtil.isEmpty(userId) || StringUtil.isEmpty(redisKey)){
-            return;
+            return null;
         }
         RedisTools.set(redisKey, userId, ConstKey.user_token_over_time);
+        return null;
     }
 
     public String getUserId(JSONObject jsonReq){
-        String redisKey = getRedisValueKey4UserToken(jsonReq);
+        String redisKey = getRedisKey_UserToken(jsonReq);
         return getRedisValue(redisKey);
     }
 
@@ -151,7 +152,7 @@ public class DeviceCtrlImpl {
     }
 
     public JSONObject addDevice(JSONObject jsonReq){
-        String redisKey = getRedisValueKey4DevList(jsonReq);
+        String redisKey = getRedisKey_DevList(jsonReq);
         if(redisKey==null || redisKey.length()==0){
             return null;
         }
@@ -167,9 +168,8 @@ public class DeviceCtrlImpl {
     }
 
 
-
     public JSONObject getDevList(JSONObject jsonReq){
-        String redisKey = getRedisValueKey4DevList(jsonReq);
+        String redisKey = getRedisKey_DevList(jsonReq);
         String redisValue = getRedisValue(redisKey);
         JSONArray jsonDevList = new JSONArray();
         if(StringUtil.isEmpty(redisValue)){
