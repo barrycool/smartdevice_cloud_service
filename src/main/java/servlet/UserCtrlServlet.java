@@ -1,11 +1,13 @@
 package servlet;
 
-import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import log.SaveTraceLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import servlet.impl.UserCtrlImpl;
+import util.ConstKey;
+import util.PrintUtil;
+import util.StringUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -17,90 +19,76 @@ import java.io.*;
  * Created by fanyuanyuan on 2018/3/17.
  */
 public class UserCtrlServlet extends HttpServlet {
-        private static final Logger logger = LoggerFactory.getLogger(UserCtrlServlet.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserCtrlServlet.class);
 
 
-        private UserCtrlImpl userCtrl = new UserCtrlImpl();
+    private UserCtrlImpl userCtrl = new UserCtrlImpl();
 
-        private void print(JSONObject queryResult, HttpServletResponse response){
-            try {
-                if(queryResult==null){
-                    queryResult = new JSONObject();
-                }
-                PrintWriter printWriter = response.getWriter();
-                printWriter.println(queryResult.toJSONString());
-                printWriter.flush();
-                printWriter.close();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
+    protected JSONObject processRequest(JSONObject jsonReq)
+            throws ServletException, IOException {
 
-        protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-                throws ServletException, IOException {
-            response.setContentType("text/html;charset=UTF-8");
-
-            JSONObject  queryResult = new JSONObject();
-            JSONObject jsonReq = QueryPack.queryPack(request);
-            System.out.println(jsonReq.toJSONString());
-            long start = System.currentTimeMillis();
-            try {
-                if (jsonReq == null) {
-                    print(queryResult, response);
-                    return;
-                }
-
-                String type = jsonReq.getString("rt");
-                String addr = jsonReq.getString("addr");
-                boolean stat = false;
-                if(type==null || addr==null){
-                    stat = false;
-                }else if(type.equals("send")){
-                    stat = userCtrl.sendCode(addr);
-                }else if(type.equals("verify")){
-                    String code = jsonReq.getString("code");
-                    stat = userCtrl.verify(addr, code);
-                }else if(type.equals("update")){
-                    userCtrl.updateUserInfo(jsonReq);
-                    stat = true;
-                }else if(type.equals("insert")){
-                    userCtrl.insertNewUser(jsonReq);
-                    stat = true;
-                }
-                queryResult.put("status", stat);
-                print(queryResult, response);
-            } catch (Exception e) {
-                e.printStackTrace();
-                logger.error("request failed, error={}", e);
-            }
-            long end = System.currentTimeMillis();
-            SaveTraceLog.saveTraceLog(request.getRemoteAddr(), end - start, request.getRequestURL().toString());
-            return;
-        }
-
-        @Override
-        protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-            processRequest(request, response);
-        }
-
-
-        public static String toString(HttpServletRequest request) throws IOException, JSONException {
-            StringBuffer sb = new StringBuffer() ;
-            InputStream is = request.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(is,"utf-8"));
-            String s = "" ;
-            while((s=br.readLine())!=null){
-                sb.append(s) ;
-            }
-            if(sb.toString().length()<=0){
+        JSONObject queryResult = new JSONObject();
+        try {
+            String nameSpace = jsonReq.getString("nameSpace");
+            if(StringUtil.isEmpty(nameSpace)){
                 return null;
-            }else {
-                return sb.toString();
             }
+            switch (nameSpace){
+                case "AccountManagement":
+                    queryResult = userCtrl.userCtrl(jsonReq);
+                    break;
+                case "DeviceManagement":
+                    queryResult = userCtrl.addDevice(jsonReq);
+                    break;
+                case "Alexa.Discovery":
+                    queryResult = userCtrl.discovery(jsonReq);
+                    break;
+                default:
+                    break;
+            }
+        } catch (Exception e) {
+            logger.error("request failed, error={}", e);
         }
+        return queryResult;
+    }
 
-        @Override
-        protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-            processRequest(request, response);
-        }
+    private void post(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        long start = System.currentTimeMillis();
+
+        response.setContentType("text/html;charset=UTF-8");
+        JSONObject jsonReq = QueryPack.postQueryPack(request);
+
+        JSONObject queryResult = processRequest(jsonReq);
+        PrintUtil.print(queryResult, response);
+
+        long end = System.currentTimeMillis();
+
+        SaveTraceLog.saveTraceLog(request.getRemoteAddr(), end - start, request.getRequestURL().toString());
+
+    }
+
+    private void get(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        long start = System.currentTimeMillis();
+
+        response.setContentType("text/html;charset=UTF-8");
+        JSONObject jsonReq = QueryPack.queryPack(request);
+
+        JSONObject queryResult = processRequest(jsonReq);
+        PrintUtil.print(queryResult, response);
+
+        long end = System.currentTimeMillis();
+
+        SaveTraceLog.saveTraceLog(request.getRemoteAddr(), end - start, request.getRequestURL().toString());
+
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        get(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        post(request, response);
+    }
 }

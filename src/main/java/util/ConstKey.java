@@ -1,5 +1,8 @@
 package util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by fanyuanyuan on 2018/3/20.
  */
@@ -29,6 +32,12 @@ public class ConstKey {
     public static final String  deviecType = "deviecType";
     public static final String  friendlyName = "firendlyName";
     public static final String  manufacturerName = "manufacturerName";
+    public static final String  userAccount = "userAccount";
+    public static final String  code = "code";
+    public static final String  msg = "msg";
+    public static final String  result = "result";
+
+
 
 
 

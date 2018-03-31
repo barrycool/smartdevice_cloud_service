@@ -1,6 +1,5 @@
 package servlet;
 
-import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import log.SaveTraceLog;
 import org.slf4j.Logger;
@@ -8,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import servlet.impl.DeviceCtrlImpl;
 import util.ConstKey;
 import util.PrintUtil;
+import util.StringUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -35,13 +35,24 @@ public class DeviceGetServlet extends HttpServlet {
         JSONObject queryResult  = null;
         try {
             String nameSpace = jsonReq.getString(ConstKey.nameSpace);
-            if(nameSpace.equals("Alexa.PowerController")){
-                queryResult = deviceCtrl.getDevStatus(jsonReq);
-                PrintUtil.print(queryResult, response);
-            }else if(nameSpace.equals("Alexa.Discovery")){
-                queryResult = deviceCtrl.getDevList(jsonReq);
-                PrintUtil.print(queryResult, response);
+            if(StringUtil.isEmpty(nameSpace)){
+                //TODO
             }
+
+            switch (nameSpace){
+                case "Alexa.PowerController":
+                    queryResult = deviceCtrl.getDevStatus(jsonReq);
+                    break;
+                case "Alexa.Discovery":
+                    queryResult = deviceCtrl.discovery(jsonReq);
+                    break;
+                case "AccountManagement":
+                    break;
+                default:
+                    break;
+            }
+            PrintUtil.print(queryResult, response);
+
         } catch (Exception e) {
             logger.error("request failed, ERROR={}", e);
         }
@@ -70,7 +81,7 @@ public class DeviceGetServlet extends HttpServlet {
                 queryResult = deviceCtrl.getDevStatus(jsonReq);
                 PrintUtil.print(queryResult, response);
             }else if(nameSpace.equals("Alexa.Discovery")){
-                queryResult = deviceCtrl.getDevList(jsonReq);
+                queryResult = deviceCtrl.discovery(jsonReq);
                 PrintUtil.print(queryResult, response);
             }
 

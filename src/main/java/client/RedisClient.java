@@ -49,13 +49,14 @@ public class RedisClient {
      * @param key
      * @param value
      */
-    public void put(String key, String value, int overtime) {
+    public String put(String key, String value, int overtime) {
         Jedis jd = pool.getResource();
+        String status = "";
         try {
             if (overtime > 0) {
-                jd.setex(key, overtime, value);
+                status = jd.setex(key, overtime, value);
             } else {
-                jd.set(key, value);
+                status = jd.set(key, value);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -65,6 +66,7 @@ public class RedisClient {
                 jd.close();
             }
         }
+        return status;
     }
 
 

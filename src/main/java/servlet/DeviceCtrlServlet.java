@@ -1,12 +1,13 @@
 package servlet;
 
-import com.alibaba.fastjson.JSONException;
+
 import com.alibaba.fastjson.JSONObject;
 import log.SaveTraceLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import servlet.impl.DeviceCtrlImpl;
 import util.PrintUtil;
+import util.StringUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -22,66 +23,72 @@ public class DeviceCtrlServlet extends HttpServlet {
 
     private DeviceCtrlImpl deviceCtrl = new DeviceCtrlImpl();
 
-
-    protected void processGet(HttpServletRequest request, HttpServletResponse response)
+    protected JSONObject processRequest(JSONObject jsonReq)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
 
-        JSONObject  queryResult = new JSONObject();
-        JSONObject jsonReq = QueryPack.queryPack(request);
-        long start = System.currentTimeMillis();
+        JSONObject queryResult = new JSONObject();
+        if (jsonReq == null) {
+            return null;
+        }
         try {
-//            queryResult = deviceCtrl.process(jsonReq);
-//            PrintUtil.print(queryResult, response);
+            String nameSpace = jsonReq.getString("nameSpace");
+            if(StringUtil.isEmpty(nameSpace)){
+                return null;
+            }
+            switch (nameSpace){
+                case "Alexa.PowerController":
+                    queryResult = deviceCtrl.setDevStatus(jsonReq);
+                    break;
+                default:
+                    break;
+            }
         } catch (Exception e) {
             logger.error("request failed, error={}", e);
         }
-        long end = System.currentTimeMillis();
-        SaveTraceLog.saveTraceLog(request.getRemoteAddr(), end - start, request.getRequestURL().toString());
-        return;
+        return queryResult;
     }
 
-    protected void processPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
+    private void post(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         long start = System.currentTimeMillis();
 
         response.setContentType("text/html;charset=UTF-8");
         JSONObject jsonReq = QueryPack.postQueryPack(request);
-        if (jsonReq == null) {
-            logger.error("request param is not valied, error={}", jsonReq);
-            return;
-        }
 
-        try {
-            String type = jsonReq.getString("type");
-            JSONObject jsonResult = new JSONObject();
-            if(type.equals("")){
-//                jsonResult = deviceCtrl.setDevStatus(jsonReq);
-            }else{
-//                jsonResult = deviceCtrl.setDevList(jsonReq);
-            }
+        JSONObject queryResult = processRequest(jsonReq);
+        PrintUtil.print(queryResult, response);
 
-            PrintUtil.print(jsonResult, response);
-
-        } catch (Exception e) {
-            logger.error("set device failed, ERROR={}", e);
-        }
         long end = System.currentTimeMillis();
+
         SaveTraceLog.saveTraceLog(request.getRemoteAddr(), end - start, request.getRequestURL().toString());
-        return;
+
     }
+
+    private void get(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        long start = System.currentTimeMillis();
+
+        response.setContentType("text/html;charset=UTF-8");
+        JSONObject jsonReq = QueryPack.queryPack(request);
+
+        JSONObject queryResult = processRequest(jsonReq);
+        PrintUtil.print(queryResult, response);
+
+        long end = System.currentTimeMillis();
+
+        SaveTraceLog.saveTraceLog(request.getRemoteAddr(), end - start, request.getRequestURL().toString());
+
+    }
+
 
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        processGet(request, response);
+        get(request, response);
     }
 
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        processPost(request, response);
+        post(request, response);
     }
 
 }

@@ -7,12 +7,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import device.DeviceFactory;
 import util.ConstKey;
-import util.Global;
+import util.RedisUtil;
 import util.StringUtil;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by fanyuanyuan on 2018/3/10.
@@ -20,10 +18,8 @@ import java.util.Set;
 public class DeviceCtrlImpl {
 
 //    private MongoXClient mongoXClient = MongoXClient.getInstance();
-    private RedisClient redisClient = RedisFactory.getClient(RedisFactory.RedisKey.APP);
 
     private DeviceFactory deviceFactory = DeviceFactory.getInstance();
-
 
     private static JSONObject deviceOpenStatus = new JSONObject();
     private static JSONObject deviceClosedStatus = new JSONObject();
@@ -33,64 +29,65 @@ public class DeviceCtrlImpl {
     }
 
 
-    public String getRedisKey_DevStatus(JSONObject jsonReq){
-        String userId = getUserId(jsonReq);
-        String deviceId = jsonReq.getString(ConstKey.deviceId);
-        if(userId==null || deviceId==null || userId.length()==0 || deviceId.length()==0){
-            return null;
-        }
-        return ConstKey.redis_key_prefix_user_device_status + userId + ":" +  deviceId;
+
+    public static Map<String, String> mapCtrl = new HashMap<String, String>();
+
+    static {
+        mapCtrl.put("TurnOn", "on");
+        mapCtrl.put("TurnOff", "off");
+        mapCtrl.put("on", "TurnOn");
+        mapCtrl.put("off", "TurnOff");
     }
 
-    public String getRedisKey_UserToken(JSONObject jsonReq){
-        String token = jsonReq.getString(ConstKey.token);
-        if(StringUtil.isEmpty(token)){
-            return null;
+    public String convertCtrlName(String name){
+        String v = mapCtrl.get(name);
+        if(StringUtil.isEmpty(v)){
+            v = "invalid";
         }
-        return ConstKey.redis_key_prefix_user_token +  token;
+        return v;
     }
 
-    public String getRedisKey_DevList(JSONObject jsonReq){
-        String userId = getUserId(jsonReq);
-        String deviceId = jsonReq.getString(ConstKey.deviceId);
-        if(userId==null || deviceId==null || userId.length()==0 || deviceId.length()==0){
-            return null;
-        }
-        return ConstKey.redis_key_prefix_user_device_list + userId + ":";
-    }
-
-    private String getRedisValue(String redisKey){
-        if(StringUtil.isEmpty(redisKey)){
-            return null;
-        }
-        if(redisClient==null){
-            return null;
-        }
-
-        return redisClient.get(redisKey);
+    public JSONObject setQueryResult(){
+        return new JSONObject();
     }
 
     public JSONObject setDevStatus(JSONObject jsonReq){
         String name = jsonReq.getString(ConstKey.name);
-        String redisKey = getRedisKey_DevStatus(jsonReq);
+        String ctrlValue = convertCtrlName(name);
+        String redisKey = RedisUtil.getRedisKey_DevStatus(jsonReq);
+        String status = RedisTools.set(redisKey, ctrlValue, ConstKey.user_device_status_over_time);
+        JSONObject jsonCtrl = new JSONObject();
+        jsonCtrl.put(ConstKey.name, jsonReq.getString(ConstKey.name));
+        jsonCtrl.put(ConstKey.value, ctrlValue);
+        jsonCtrl.put(ConstKey.nameSpace, "Alexa.PowerController");
+
+        JSONObject jsonHealth = new JSONObject();
+        jsonHealth.put(ConstKey.name, "connectivity");
+        if(!"OK".equals(status)){
+            ctrlValue = "UNREACHABLE";
+        }
+        jsonHealth.put(ConstKey.value, ctrlValue);
+        jsonHealth.put(ConstKey.nameSpace, "Alexa.EndpointHealth");
+
+        JSONArray jsonProperties = new JSONArray();
+        jsonProperties.add(jsonCtrl);
+        jsonProperties.add(jsonHealth);
 
         JSONObject jsonResult = new JSONObject();
-        String deviceId = jsonReq.getString(ConstKey.deviceId);
-        jsonResult.put(ConstKey.deviceId, deviceId);
-        jsonResult.put(ConstKey.name, "Response");
+        jsonResult.put(ConstKey.deviceId, jsonReq.getString(ConstKey.deviceId));
         jsonResult.put(ConstKey.nameSpace, "Alexa");
-        if(StringUtil.isEmpty(redisKey)){
-            return jsonResult;
-        }
-        RedisTools.set(redisKey, name, ConstKey.user_device_status_over_time);
+        jsonResult.put(ConstKey.name, "Response");
+        jsonResult.put(ConstKey.properties, jsonProperties);
 
         return jsonResult;
     }
 
     public JSONObject getDevStatus(JSONObject jsonReq){
-        String redisKey = getRedisKey_DevStatus(jsonReq);
-        String redisValue = getRedisValue(redisKey);
-
+        String redisKey = RedisUtil.getRedisKey_DevStatus(jsonReq);
+        String redisValue = RedisUtil.getRedisValue(redisKey);
+        if(StringUtil.isEmpty(redisValue)){
+            redisValue = "UNREACHABLE";
+        }
         JSONObject jsonCtrl = new JSONObject();
         jsonCtrl.put(ConstKey.name, jsonReq.getString(ConstKey.name));
         jsonCtrl.put(ConstKey.value, redisValue);
@@ -111,87 +108,6 @@ public class DeviceCtrlImpl {
         jsonResult.put(ConstKey.name, "Response");
         jsonResult.put(ConstKey.properties, jsonProperties);
 
-        return jsonResult;
-    }
-
-    public JSONObject setUserToken(JSONObject jsonReq){
-        String userId = getUserId(jsonReq);
-        String redisKey = getRedisKey_UserToken(jsonReq);
-        if(StringUtil.isEmpty(userId) || StringUtil.isEmpty(redisKey)){
-            return null;
-        }
-        RedisTools.set(redisKey, userId, ConstKey.user_token_over_time);
-        return null;
-    }
-
-    public String getUserId(JSONObject jsonReq){
-        String redisKey = getRedisKey_UserToken(jsonReq);
-        return getRedisValue(redisKey);
-    }
-
-    public String addDevice(String redisValue, JSONObject jsonReq){
-        if(jsonReq==null){
-            return redisValue;
-        }
-        String deviceId = jsonReq.getString(ConstKey.deviceId);
-        String deviecType = jsonReq.getString(ConstKey.deviecType);
-        String friendlyName = jsonReq.getString(ConstKey.friendlyName);
-        String manufacturerName = jsonReq.getString(ConstKey.manufacturerName);
-
-        if(StringUtil.isEmpty(deviceId) || StringUtil.isEmpty(deviecType) ||
-                StringUtil.isEmpty(friendlyName) || StringUtil.isEmpty(manufacturerName)){
-            return redisValue;
-        }
-
-        String info = deviceId + ":" + deviecType + ":" + friendlyName + ":" + manufacturerName;
-        Set<String> set = new HashSet<String>(Arrays.asList(redisValue.split(",")));
-        if(set.contains(info)){
-            return redisValue;
-        }
-        return redisValue + "," + info;
-    }
-
-    public JSONObject addDevice(JSONObject jsonReq){
-        String redisKey = getRedisKey_DevList(jsonReq);
-        if(redisKey==null || redisKey.length()==0){
-            return null;
-        }
-
-        String redisValue = redisClient.get(ConstKey.redis_key_prefix_user_device_list);
-        String v = addDevice(redisValue, jsonReq);
-        if(!StringUtil.isEmpty(v)){
-            RedisTools.set(redisKey, v, ConstKey.user_device_list_over_time);
-        }
-
-        JSONObject jsonResult = new JSONObject();
-        return jsonResult;
-    }
-
-
-    public JSONObject getDevList(JSONObject jsonReq){
-        String redisKey = getRedisKey_DevList(jsonReq);
-        String redisValue = getRedisValue(redisKey);
-        JSONArray jsonDevList = new JSONArray();
-        if(StringUtil.isEmpty(redisValue)){
-            String[] items = redisValue.split(",");
-            for(String item : items){
-                String[] infos = item.split(":");
-                if(infos.length!=4){
-                    continue;
-                }
-                JSONObject jsonDev = new JSONObject();
-                jsonDev.put(ConstKey.deviceId, infos[0]);
-                jsonDev.put(ConstKey.deviecType, infos[1]);
-                jsonDev.put(ConstKey.friendlyName, infos[2]);
-                jsonDev.put(ConstKey.manufacturerName, infos[3]);
-                jsonDevList.add(jsonDev);
-            }
-        }
-
-        JSONObject jsonResult = new JSONObject();
-        jsonResult.put(ConstKey.name, "Discover.Response");
-        jsonResult.put(ConstKey.nameSpace, "Alexa.Discovery");
-        jsonResult.put(ConstKey.devices, jsonDevList);
         return jsonResult;
     }
 
