@@ -5,6 +5,7 @@ import log.SaveTraceLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import servlet.impl.DeviceCtrlImpl;
+import servlet.impl.UserCtrlImpl;
 import util.ConstKey;
 import util.PrintUtil;
 import util.StringUtil;
@@ -22,6 +23,7 @@ public class DeviceGetServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DeviceGetServlet.class);
 
     private DeviceCtrlImpl deviceCtrl = new DeviceCtrlImpl();
+    private UserCtrlImpl userCtrl = UserCtrlImpl.getUserCtrl();
 
 
     protected void processGet(HttpServletRequest request, HttpServletResponse response)
@@ -44,7 +46,7 @@ public class DeviceGetServlet extends HttpServlet {
                     queryResult = deviceCtrl.getDevStatus(jsonReq);
                     break;
                 case "Alexa.Discovery":
-                    queryResult = deviceCtrl.discovery(jsonReq);
+                    queryResult = userCtrl.discovery(jsonReq);
                     break;
                 case "AccountManagement":
                     break;
@@ -81,7 +83,7 @@ public class DeviceGetServlet extends HttpServlet {
                 queryResult = deviceCtrl.getDevStatus(jsonReq);
                 PrintUtil.print(queryResult, response);
             }else if(nameSpace.equals("Alexa.Discovery")){
-                queryResult = deviceCtrl.discovery(jsonReq);
+                queryResult = userCtrl.discovery(jsonReq);
                 PrintUtil.print(queryResult, response);
             }
 

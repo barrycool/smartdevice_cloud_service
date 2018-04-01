@@ -30,6 +30,14 @@ public class UserCtrlImpl {
 
     private MongoXClient mongoXClient = MongoXClient.getInstance();
 
+
+    private static UserCtrlImpl userCtrl = new UserCtrlImpl();
+    public static UserCtrlImpl getUserCtrl(){
+        return userCtrl;
+    }
+
+    private UserCtrlImpl(){}
+
     public JSONObject sendCode(JSONObject jsonReq) {
         JSONObject queryResult = new JSONObject();
         queryResult.put(ConstKey.nameSpace, jsonReq.getString(ConstKey.nameSpace));

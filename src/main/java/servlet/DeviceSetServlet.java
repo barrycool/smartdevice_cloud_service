@@ -5,6 +5,7 @@ import log.SaveTraceLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import servlet.impl.DeviceCtrlImpl;
+import servlet.impl.UserCtrlImpl;
 import util.ConstKey;
 import util.PrintUtil;
 
@@ -21,6 +22,8 @@ public class DeviceSetServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DeviceSetServlet.class);
 
     private DeviceCtrlImpl deviceCtrl = new DeviceCtrlImpl();
+    private UserCtrlImpl userCtrl = UserCtrlImpl.getUserCtrl();
+
 
     protected void processGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -35,9 +38,9 @@ public class DeviceSetServlet extends HttpServlet {
             if(nameSpace.equals("Alexa.PowerController")){
                 jsonResult = deviceCtrl.setDevStatus(jsonReq);
             }else if(nameSpace.equals("Alexa.AddDevice")){
-                jsonResult = deviceCtrl.addDevice(jsonReq);
+                jsonResult = userCtrl.addDevice(jsonReq);
             }else if(nameSpace.equals("Alexa.UserToken")){
-                jsonResult = deviceCtrl.setUserToken(jsonReq);
+                jsonResult = userCtrl.setUserToken(jsonReq);
             }
             PrintUtil.print(jsonResult, response);
         } catch (Exception e) {
@@ -66,7 +69,7 @@ public class DeviceSetServlet extends HttpServlet {
             if(nameSpace.equals("Alexa.PowerController")){
                 jsonResult = deviceCtrl.setDevStatus(jsonReq);
             }else if(nameSpace.equals("Alexa.AddDevice")){
-                jsonResult = deviceCtrl.addDevice(jsonReq);
+                jsonResult = userCtrl.addDevice(jsonReq);
             }
             PrintUtil.print(jsonResult, response);
 

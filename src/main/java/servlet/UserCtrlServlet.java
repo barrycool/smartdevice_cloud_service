@@ -22,7 +22,7 @@ public class UserCtrlServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(UserCtrlServlet.class);
 
 
-    private UserCtrlImpl userCtrl = new UserCtrlImpl();
+    private UserCtrlImpl userCtrl = UserCtrlImpl.getUserCtrl();
 
     protected JSONObject processRequest(JSONObject jsonReq)
             throws ServletException, IOException {
