@@ -255,11 +255,13 @@ public class UserCtrlImpl {
         queryResult.put(ConstKey.name, "Update.Response");
         JSONObject jsonResult = new JSONObject();
 
-        String userId = RedisUtil.getUserId(jsonReq);
+//        String userId = RedisUtil.getUserId(jsonReq);
+        String userId = jsonReq.getString("userId");
         String redisKey = RedisUtil.getRedisKey_UserToken(jsonReq);
         if (StringUtil.isEmpty(userId) || StringUtil.isEmpty(redisKey)) {
             jsonResult.put(ConstKey.code, "Failed");
             jsonResult.put(ConstKey.msg, "user_id is null");
+            queryResult.put(ConstKey.result, jsonResult);
             return queryResult;
         }
         String status = RedisTools.set(redisKey, userId, ConstKey.user_token_over_time);
