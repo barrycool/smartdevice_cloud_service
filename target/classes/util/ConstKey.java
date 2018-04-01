@@ -23,10 +23,6 @@ public class ConstKey {
     public static final String redis_key_prefix_user_info = "user_info:";
     public static final int user_info_over_time = 0;
 
-    //rediskey前缀:用户名密码
-    public static final String redis_key_prefix_user_passwd = "user_name_to_passwd:";
-    public static final int user_passwd_over_time = 0;
-
     //rediskey前缀:注册码对应用户信息
     public static final String redis_key_prefix_send_code_info = "user_send_code:";
     public static final int send_code_over_time = 60*30;
@@ -58,7 +54,6 @@ public class ConstKey {
     public static final String  refreshToken= "refreshToken";
     public static final String  expiresDate= "expiresDate";
     public static final String  userInfo= "userInfo";
-    public static final String  loginName= "loginName";
 
 
 
