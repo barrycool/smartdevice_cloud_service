@@ -1,7 +1,9 @@
 package servlet.impl;
 
 import client.MongoXClient;
+import client.RedisClient;
 import client.RedisTools;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mongodb.client.MongoCursor;
@@ -32,11 +34,13 @@ public class UserCtrlImpl {
 
 
     private static UserCtrlImpl userCtrl = new UserCtrlImpl();
-    public static UserCtrlImpl getUserCtrl(){
+
+    public static UserCtrlImpl getUserCtrl() {
         return userCtrl;
     }
 
-    private UserCtrlImpl(){}
+    private UserCtrlImpl() {
+    }
 
     public JSONObject sendCode(JSONObject jsonReq) {
         JSONObject queryResult = new JSONObject();
@@ -47,7 +51,7 @@ public class UserCtrlImpl {
         jsonResult.put(ConstKey.msg, "send register code failed");
         String userMailAddr = jsonReq.getString(ConstKey.userAccount);
 
-        if(StringUtil.isEmpty(userMailAddr)){
+        if (StringUtil.isEmpty(userMailAddr)) {
             queryResult.put(ConstKey.result, jsonResult);
             return queryResult;
         }
@@ -63,7 +67,7 @@ public class UserCtrlImpl {
         return queryResult;
     }
 
-    public JSONObject packUserInfo(JSONObject jsonReq){
+    public JSONObject packUserInfo(JSONObject jsonReq) {
         JSONObject jsonUserInfo = new JSONObject();
         try {
             jsonUserInfo.put(ConstKey.userName, jsonReq.getString(ConstKey.userName));
@@ -71,17 +75,17 @@ public class UserCtrlImpl {
             jsonUserInfo.put(ConstKey.userPhone, jsonReq.getString(ConstKey.userPhone));
             jsonUserInfo.put(ConstKey.userEmail, jsonReq.getString(ConstKey.userEmail));
             jsonUserInfo.put(ConstKey.RegisterCode, jsonReq.getString(ConstKey.RegisterCode));
-        }catch (Exception r){
+        } catch (Exception r) {
 
         }
         return jsonUserInfo;
     }
 
-    public JSONObject userCtrl(JSONObject jsonReq){
+    public JSONObject userCtrl(JSONObject jsonReq) {
 
         JSONObject queryResult = new JSONObject();
         String name = jsonReq.getString(ConstKey.name);
-        switch (name){
+        switch (name) {
             case "requestRegisterCode":
                 queryResult = sendCode(jsonReq);
                 break;
@@ -89,18 +93,32 @@ public class UserCtrlImpl {
                 JSONObject jsonUserInfo = packUserInfo(jsonReq);
                 queryResult = addUser(jsonUserInfo);
                 break;
+            case "LogonIn":
+                queryResult = login(jsonReq);
+                break;
             default:
                 break;
         }
         return queryResult;
     }
 
-    public boolean verify(String userMailAddr, String code) {
-        String hist = sendUserCodeMap.get(userMailAddr);
-        if (hist == null || code == null || !hist.equals(code)) {
-            return false;
+    public JSONObject login(JSONObject jsonReq) {
+        JSONObject queryResult = new JSONObject();
+        queryResult.put(ConstKey.nameSpace, "AccountManagement");
+        queryResult.put(ConstKey.name, "logonIn.Response");
+
+        JSONObject jsonUserInfo = new JSONObject();
+        String redisKey_userInfo = RedisUtil.getRedisKey_UserInfo(jsonReq);
+        String v = RedisTools.get(redisKey_userInfo);
+        if(!StringUtil.isEmpty(v)){
+            jsonUserInfo = JSON.parseObject(v);
         }
-        return true;
+
+        JSONObject jsonResult = new JSONObject();
+        jsonResult.put(ConstKey.code, "OK");
+        jsonResult.put(ConstKey.msg, "Logon in successfully");
+        jsonResult.put(ConstKey.userInfo, jsonUserInfo);
+        return queryResult;
     }
 
 
@@ -129,17 +147,13 @@ public class UserCtrlImpl {
         }
     }
 
-    public JSONObject addUser(JSONObject jsonUserInfo){
-        Document userDoc = new Document();
-
-        for(Map.Entry<String, Object> entry : jsonUserInfo.entrySet()){
-            userDoc.put(entry.getKey(), entry.getValue().toString());
-        }
-        mongoXClient.insertDoc(userDoc);
+    public JSONObject addUser(JSONObject jsonUserInfo) {
 
         JSONObject queryResult = new JSONObject();
         queryResult.put(ConstKey.nameSpace, "AccountManagement");
         queryResult.put(ConstKey.name, "AddUser.Response");
+        boolean addRedisStatus = addUserRedis(jsonUserInfo);
+        boolean addMongoStatus = addUserMongo(jsonUserInfo);
 
         JSONObject jsonResult = new JSONObject();
         jsonResult.put(ConstKey.code, "OK");
@@ -149,34 +163,52 @@ public class UserCtrlImpl {
         return queryResult;
     }
 
-    public void updateUserInfo(JSONObject jsonUserInfo){
+    public boolean addUserMongo(JSONObject jsonUserInfo) {
+        Document userDoc = new Document();
+        for (Map.Entry<String, Object> entry : jsonUserInfo.entrySet()) {
+            userDoc.put(entry.getKey(), entry.getValue().toString());
+        }
+        mongoXClient.insertDoc(userDoc);
+        return true;
+    }
+
+    public boolean addUserRedis(JSONObject jsonUserInfo) {
+        String redisKey_userInfo = RedisUtil.getRedisKey_UserInfo(jsonUserInfo);
+        String v = jsonUserInfo.toJSONString();
+        RedisTools.set(redisKey_userInfo, v, ConstKey.user_info_over_time);
+        return true;
+    }
+
+
+    public void updateUserInfo(JSONObject jsonUserInfo) {
         mongoXClient.updateDoc(jsonUserInfo);
     }
 
 
-    public JSONObject setUserToken(JSONObject jsonReq){
+    public JSONObject setUserToken(JSONObject jsonReq) {
+        JSONObject queryResult = new JSONObject();
+        queryResult.put(ConstKey.nameSpace, "Oauth");
+        queryResult.put(ConstKey.name, "Update.Response");
+        JSONObject jsonResult = new JSONObject();
+
         String userId = RedisUtil.getUserId(jsonReq);
         String redisKey = RedisUtil.getRedisKey_UserToken(jsonReq);
-        if(StringUtil.isEmpty(userId) || StringUtil.isEmpty(redisKey)){
-            return null;
+        if (StringUtil.isEmpty(userId) || StringUtil.isEmpty(redisKey)) {
+            jsonResult.put(ConstKey.code, "Failed");
+            jsonResult.put(ConstKey.msg, "user_id is null");
+            return queryResult;
         }
-        RedisTools.set(redisKey, userId, ConstKey.user_token_over_time);
-        return null;
-    }
+        String status = RedisTools.set(redisKey, userId, ConstKey.user_token_over_time);
+        jsonResult.put(ConstKey.code, "OK");
+        jsonResult.put(ConstKey.msg, "Update successfully");
+        queryResult.put(ConstKey.result, jsonResult);
 
-    public JSONObject updateToken(JSONObject jsonReq){
-        String userId = RedisUtil.getUserId(jsonReq);
-        String redisKey = RedisUtil.getRedisKey_UserToken(jsonReq);
-        if(StringUtil.isEmpty(userId) || StringUtil.isEmpty(redisKey)){
-            return null;
-        }
-        RedisTools.set(redisKey, userId, ConstKey.user_token_over_time);
-        return null;
+        return queryResult;
     }
 
 
-    public String addDevice(String redisValue, JSONObject jsonReq){
-        if(jsonReq==null){
+    public String addDevice(String redisValue, JSONObject jsonReq) {
+        if (jsonReq == null) {
             return redisValue;
         }
         String deviceId = jsonReq.getString(ConstKey.deviceId);
@@ -184,28 +216,28 @@ public class UserCtrlImpl {
         String friendlyName = jsonReq.getString(ConstKey.friendlyName);
         String manufacturerName = jsonReq.getString(ConstKey.manufacturerName);
 
-        if(StringUtil.isEmpty(deviceId) || StringUtil.isEmpty(deviecType) ||
-                StringUtil.isEmpty(friendlyName) || StringUtil.isEmpty(manufacturerName)){
+        if (StringUtil.isEmpty(deviceId) || StringUtil.isEmpty(deviecType) ||
+                StringUtil.isEmpty(friendlyName) || StringUtil.isEmpty(manufacturerName)) {
             return redisValue;
         }
 
         String info = deviceId + ":" + deviecType + ":" + friendlyName + ":" + manufacturerName;
         Set<String> set = new HashSet<String>(Arrays.asList(redisValue.split(",")));
-        if(set.contains(info)){
+        if (set.contains(info)) {
             return redisValue;
         }
         return redisValue + "," + info;
     }
 
-    public JSONObject addDevice(JSONObject jsonReq){
+    public JSONObject addDevice(JSONObject jsonReq) {
         String redisKey = RedisUtil.getRedisKey_DevList(jsonReq);
-        if(redisKey==null || redisKey.length()==0){
+        if (redisKey == null || redisKey.length() == 0) {
             return null;
         }
 
         String redisValue = RedisUtil.getRedisValue(redisKey);
         String v = addDevice(redisValue, jsonReq);
-        if(!StringUtil.isEmpty(v)){
+        if (!StringUtil.isEmpty(v)) {
             RedisTools.set(redisKey, v, ConstKey.user_device_list_over_time);
         }
 
@@ -221,22 +253,22 @@ public class UserCtrlImpl {
     }
 
 
-    public JSONObject discovery(JSONObject jsonReq){
+    public JSONObject discovery(JSONObject jsonReq) {
         JSONObject jsonResult = new JSONObject();
         jsonResult.put(ConstKey.name, "Discover.Response");
         jsonResult.put(ConstKey.nameSpace, "Alexa.Discovery");
 
         String redisKey = RedisUtil.getRedisKey_DevList(jsonReq);
         String redisValue = RedisUtil.getRedisValue(redisKey);
-        if(StringUtil.isEmpty(redisValue)){
+        if (StringUtil.isEmpty(redisValue)) {
             jsonResult.put(ConstKey.devices, "none");
             return jsonResult;
         }
         JSONArray jsonDevList = new JSONArray();
         String[] items = redisValue.split(",");
-        for(String item : items){
+        for (String item : items) {
             String[] infos = item.split(":");
-            if(infos.length!=4){
+            if (infos.length != 4) {
                 continue;
             }
             JSONObject jsonDev = new JSONObject();
@@ -251,7 +283,7 @@ public class UserCtrlImpl {
     }
 
 
-    public static void main(String[] argc){
+    public static void main(String[] argc) {
         UserCtrlImpl userCtrl = new UserCtrlImpl();
 
         JSONObject jsonObject = new JSONObject();

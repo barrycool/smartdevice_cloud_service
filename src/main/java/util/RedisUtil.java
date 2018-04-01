@@ -52,5 +52,13 @@ public class RedisUtil {
         return ConstKey.redis_key_prefix_user_device_list + userId + ":";
     }
 
+    public static String getRedisKey_UserInfo(JSONObject jsonReq){
+        String userId = jsonReq.getString("userId");
+        if(StringUtil.isEmpty(userId)){
+            return null;
+        }
+        return ConstKey.redis_key_prefix_user_info + userId + ":";
+    }
+
 
 }

@@ -15,4 +15,8 @@ public class RedisTools extends Thread{
     public static String set(String key, String v, int overTime) {
         return redisClient.put(key, v, overTime);
     }
+
+    public static String get(String key) {
+        return redisClient.get(key);
+    }
 }
