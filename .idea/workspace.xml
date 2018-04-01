@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8ae86dee-f128-4260-b26a-b2c242b8a2db" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/client/RedisTools.java" afterPath="$PROJECT_DIR$/src/main/java/client/RedisTools.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/servlet/impl/UserCtrlImpl.java" afterPath="$PROJECT_DIR$/src/main/java/servlet/impl/UserCtrlImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/util/ConstKey.java" afterPath="$PROJECT_DIR$/src/main/java/util/ConstKey.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/util/RedisUtil.java" afterPath="$PROJECT_DIR$/src/main/java/util/RedisUtil.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -34,8 +31,8 @@
       <file leaf-file-name="UserCtrlImpl.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/servlet/impl/UserCtrlImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="121" column="51" lean-forward="false" selection-start-line="121" selection-start-column="42" selection-end-line="121" selection-end-column="51" />
+            <state relative-caret-position="344">
+              <caret line="131" column="55" lean-forward="false" selection-start-line="131" selection-start-column="55" selection-end-line="131" selection-end-column="55" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -58,8 +55,8 @@
       <file leaf-file-name="ConstKey.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/util/ConstKey.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="194">
-              <caret line="34" column="0" lean-forward="true" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
+            <state relative-caret-position="155">
+              <caret line="58" column="32" lean-forward="false" selection-start-line="58" selection-start-column="32" selection-end-line="58" selection-end-column="32" />
               <folding />
             </state>
           </provider>
@@ -2344,12 +2341,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1522414006359</updated>
-      <workItem from="1522414007642" duration="31294000" />
+      <workItem from="1522414007642" duration="31770000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="31294000" />
+    <option name="totallyTimeSpent" value="31770000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="23" width="1440" height="877" extended-state="6" />
@@ -2604,14 +2601,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/util/ConstKey.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="194">
-          <caret line="34" column="0" lean-forward="true" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/util/RedisUtil.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="331">
@@ -2620,10 +2609,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/util/ConstKey.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="155">
+          <caret line="58" column="32" lean-forward="false" selection-start-line="58" selection-start-column="32" selection-end-line="58" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/servlet/impl/UserCtrlImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="121" column="51" lean-forward="false" selection-start-line="121" selection-start-column="42" selection-end-line="121" selection-end-column="51" />
+        <state relative-caret-position="344">
+          <caret line="131" column="55" lean-forward="false" selection-start-line="131" selection-start-column="55" selection-end-line="131" selection-end-column="55" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

@@ -129,7 +129,7 @@ public class UserCtrlImpl {
         if(!passwd.equals(redisPasswd)){
             jsonResult.put(ConstKey.code, "Failed");
             jsonResult.put(ConstKey.msg, "user_name or passwd not correct!!!");
-            queryResult.put(ConstKey.result, jsonReq);
+            queryResult.put(ConstKey.result, jsonResult);
             return queryResult;
         }
         jsonResult.put(ConstKey.userInfo, jsonUserInfo);
