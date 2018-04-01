@@ -44,7 +44,7 @@ public class UserCtrlImpl {
     public JSONObject sendCode(JSONObject jsonReq) {
         JSONObject queryResult = new JSONObject();
         queryResult.put(ConstKey.nameSpace, jsonReq.getString(ConstKey.nameSpace));
-        queryResult.put(ConstKey.name, "requestRegisterCode.Response");
+        queryResult.put(ConstKey.name, "RequestRegisterCode.Response");
         JSONObject jsonResult = new JSONObject();
         jsonResult.put(ConstKey.code, "failed");
         jsonResult.put(ConstKey.msg, "send register code failed");
@@ -88,7 +88,7 @@ public class UserCtrlImpl {
         JSONObject queryResult = new JSONObject();
         String name = jsonReq.getString(ConstKey.name);
         switch (name) {
-            case "requestRegisterCode":
+            case "RequestRegisterCode":
                 queryResult = sendCode(jsonReq);
                 break;
             case "AddUser":

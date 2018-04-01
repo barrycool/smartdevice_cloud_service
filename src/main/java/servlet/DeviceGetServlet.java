@@ -30,7 +30,7 @@ public class DeviceGetServlet extends HttpServlet {
         try {
             String nameSpace = jsonReq.getString(ConstKey.nameSpace);
             switch (nameSpace){
-                case "Alexa.PowerController":
+                case "Alexa":
                     queryResult = deviceCtrl.getDevStatus(jsonReq);
                     break;
                 default:
