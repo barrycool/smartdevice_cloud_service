@@ -134,6 +134,7 @@ public class UserCtrlImpl {
         }
         jsonUserInfo.remove(ConstKey.userPasswd);
         jsonUserInfo.remove("_id");
+        jsonUserInfo.remove(ConstKey.userId);
         jsonResult.put(ConstKey.userInfo, jsonUserInfo);
         queryResult.put(ConstKey.result, jsonResult);
         return queryResult;
