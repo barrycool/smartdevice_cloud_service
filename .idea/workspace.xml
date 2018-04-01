@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="8ae86dee-f128-4260-b26a-b2c242b8a2db" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/servlet/impl/UserCtrlImpl.java" afterPath="$PROJECT_DIR$/src/main/java/servlet/impl/UserCtrlImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/submit.sh" afterPath="$PROJECT_DIR$/submit.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/util/RedisUtil.java" afterPath="$PROJECT_DIR$/src/main/java/util/RedisUtil.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -22,8 +22,8 @@
       <file leaf-file-name="UserCtrlServlet.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/servlet/UserCtrlServlet.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="37" column="48" lean-forward="false" selection-start-line="37" selection-start-column="48" selection-end-line="37" selection-end-column="48" />
+            <state relative-caret-position="161">
+              <caret line="40" column="49" lean-forward="false" selection-start-line="40" selection-start-column="49" selection-end-line="40" selection-end-column="49" />
               <folding />
             </state>
           </provider>
@@ -32,8 +32,8 @@
       <file leaf-file-name="UserCtrlImpl.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/servlet/impl/UserCtrlImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="274">
-              <caret line="136" column="43" lean-forward="false" selection-start-line="136" selection-start-column="43" selection-end-line="136" selection-end-column="43" />
+            <state relative-caret-position="90">
+              <caret line="297" column="62" lean-forward="false" selection-start-line="297" selection-start-column="62" selection-end-line="297" selection-end-column="62" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -56,8 +56,8 @@
       <file leaf-file-name="ConstKey.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/util/ConstKey.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="183">
-              <caret line="53" column="54" lean-forward="false" selection-start-line="53" selection-start-column="45" selection-end-line="53" selection-end-column="54" />
+            <state relative-caret-position="155">
+              <caret line="15" column="28" lean-forward="false" selection-start-line="15" selection-start-column="28" selection-end-line="15" selection-end-column="28" />
               <folding />
             </state>
           </provider>
@@ -66,8 +66,8 @@
       <file leaf-file-name="RedisUtil.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/util/RedisUtil.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="331">
-              <caret line="73" column="0" lean-forward="true" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
+            <state relative-caret-position="290">
+              <caret line="54" column="44" lean-forward="false" selection-start-line="54" selection-start-column="25" selection-end-line="54" selection-end-column="44" />
               <folding />
             </state>
           </provider>
@@ -93,13 +93,14 @@
       <find>System.out</find>
       <find>sendUserCodeMap</find>
       <find>System.out.println</find>
+      <find>DeviceManagement</find>
     </findStrings>
     <replaceStrings>
       <replace>postRequest</replace>
       <replace>getRequest</replace>
       <replace>get</replace>
-      <replace>findIterByUserId</replace>
       <replace>user_ctrl</replace>
+      <replace>findIterByUserId</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -2342,12 +2343,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1522414006359</updated>
-      <workItem from="1522414007642" duration="33254000" />
+      <workItem from="1522414007642" duration="33870000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="33254000" />
+    <option name="totallyTimeSpent" value="33870000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="23" width="1440" height="877" extended-state="6" />
@@ -2594,34 +2595,34 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/util/RedisUtil.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="331">
-          <caret line="73" column="0" lean-forward="true" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/util/ConstKey.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="183">
-          <caret line="53" column="54" lean-forward="false" selection-start-line="53" selection-start-column="45" selection-end-line="53" selection-end-column="54" />
+        <state relative-caret-position="155">
+          <caret line="15" column="28" lean-forward="false" selection-start-line="15" selection-start-column="28" selection-end-line="15" selection-end-column="28" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/servlet/UserCtrlServlet.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="37" column="48" lean-forward="false" selection-start-line="37" selection-start-column="48" selection-end-line="37" selection-end-column="48" />
+        <state relative-caret-position="161">
+          <caret line="40" column="49" lean-forward="false" selection-start-line="40" selection-start-column="49" selection-end-line="40" selection-end-column="49" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/util/RedisUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="290">
+          <caret line="54" column="44" lean-forward="false" selection-start-line="54" selection-start-column="25" selection-end-line="54" selection-end-column="44" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/servlet/impl/UserCtrlImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="274">
-          <caret line="136" column="43" lean-forward="false" selection-start-line="136" selection-start-column="43" selection-end-line="136" selection-end-column="43" />
+        <state relative-caret-position="90">
+          <caret line="297" column="62" lean-forward="false" selection-start-line="297" selection-start-column="62" selection-end-line="297" selection-end-column="62" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

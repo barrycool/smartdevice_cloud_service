@@ -294,7 +294,8 @@ public class UserCtrlImpl {
     }
 
     public JSONObject addDevice(JSONObject jsonReq) {
-        String redisKey = RedisUtil.getRedisKey_DevList(jsonReq);
+        String userId = jsonReq.getString("userId");
+        String redisKey = RedisUtil.getRedisKey_DevList(userId);
         if (redisKey == null || redisKey.length() == 0) {
             return null;
         }
