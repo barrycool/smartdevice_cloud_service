@@ -96,7 +96,7 @@ public class UserCtrlImpl {
                 JSONObject jsonUserInfo = packUserInfo(jsonReq);
                 queryResult = addUser(jsonUserInfo);
                 break;
-            case "LogIn":
+            case "Login":
                 queryResult = login(jsonReq);
                 break;
             default:
@@ -130,12 +130,12 @@ public class UserCtrlImpl {
         if(StringUtil.isEmpty(v)){
             jsonResult.put(ConstKey.code, "Failed");
             jsonResult.put(ConstKey.msg, "user_id not exist!!!");
-            queryResult.put(ConstKey.result, jsonReq);
+            queryResult.put(ConstKey.result, jsonResult);
             return queryResult;
         }
         jsonUserInfo = JSON.parseObject(v);
         jsonResult.put(ConstKey.userInfo, jsonUserInfo);
-        queryResult.put(ConstKey.result, jsonReq);
+        queryResult.put(ConstKey.result, jsonResult);
         return queryResult;
     }
 
