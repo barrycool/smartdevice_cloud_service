@@ -175,6 +175,7 @@ public class UserCtrlImpl {
 
         jsonUserInfo.remove(ConstKey.RegisterCode);
         jsonUserInfo.remove(ConstKey.userName);
+        jsonUserInfo.remove(ConstKey.userPasswd);
 
         String userId = StringUtil.getMD5(jsonUserInfo.toJSONString());
         jsonUserInfo.put(ConstKey.userId, userId);
@@ -183,7 +184,7 @@ public class UserCtrlImpl {
         JSONObject jsonExistUserInfo = mongoXClient.getUserInfo(userId);
         if(jsonExistUserInfo!=null && jsonExistUserInfo.size()!=0){
             jsonResult.put(ConstKey.code, "Failed");
-            jsonResult.put(ConstKey.msg, "add user has exist");
+            jsonResult.put(ConstKey.msg, "add user has exist!!!");
             queryResult.put(ConstKey.result, jsonResult);
             return  queryResult;
         }
