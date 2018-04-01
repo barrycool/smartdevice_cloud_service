@@ -45,8 +45,7 @@ public class RedisUtil {
 
     public static String getRedisKey_DevList(JSONObject jsonReq){
         String userId = getUserId(jsonReq);
-        String deviceId = jsonReq.getString(ConstKey.deviceId);
-        if(userId==null || deviceId==null || userId.length()==0 || deviceId.length()==0){
+        if(StringUtil.isEmpty(userId)){
             return null;
         }
         return ConstKey.redis_key_prefix_user_device_list + userId + ":";
