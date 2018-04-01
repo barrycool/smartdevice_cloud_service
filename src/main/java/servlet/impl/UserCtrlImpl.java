@@ -173,11 +173,15 @@ public class UserCtrlImpl {
             return  queryResult;
         }
 
-        jsonUserInfo.remove(ConstKey.RegisterCode);
-        jsonUserInfo.remove(ConstKey.userName);
-        jsonUserInfo.remove(ConstKey.userPasswd);
-
-        String userId = StringUtil.getMD5(jsonUserInfo.toJSONString());
+        String userPhone = jsonUserInfo.getString(ConstKey.userPhone);
+        String userEmail = jsonUserInfo.getString(ConstKey.userEmail);
+        String userId = "";
+        if(!StringUtil.isEmpty(userPhone)){
+            userId = StringUtil.getMD5(userPhone);
+        }
+        if(StringUtil.isEmpty(userId) && !StringUtil.isEmpty(userEmail)){
+            userId = StringUtil.getMD5(userEmail);
+        }
         jsonUserInfo.put(ConstKey.userId, userId);
         jsonUserInfo.put("_id", userId);
 
@@ -188,6 +192,7 @@ public class UserCtrlImpl {
             queryResult.put(ConstKey.result, jsonResult);
             return  queryResult;
         }
+        jsonUserInfo.remove(ConstKey.RegisterCode);
         boolean addMongoStatus = addUserMongo(jsonUserInfo);
         boolean addRedisStatus = addUserRedis(jsonUserInfo);
 
