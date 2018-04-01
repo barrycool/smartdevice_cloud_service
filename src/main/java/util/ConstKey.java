@@ -25,7 +25,7 @@ public class ConstKey {
 
     //rediskey前缀:注册码对应用户信息
     public static final String redis_key_prefix_send_code_info = "user_send_code:";
-    public static final int send_code_over_time = 30;
+    public static final int send_code_over_time = 60*30;
 
 
 
