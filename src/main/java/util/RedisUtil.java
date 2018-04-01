@@ -53,7 +53,7 @@ public class RedisUtil {
     }
 
     public static String getRedisKey_UserInfo(JSONObject jsonReq){
-        String userId = jsonReq.getString("userId");
+        String userId = jsonReq.getString(ConstKey.userId);
         if(StringUtil.isEmpty(userId)){
             return null;
         }

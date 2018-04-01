@@ -15,6 +15,7 @@ import java.net.InetAddress;
 import java.util.*;
 
 import static com.mongodb.client.model.Projections.*;
+import static java.util.Arrays.asList;
 
 /**
  * Created by fanyuanyuan-iri on 2017/5/8.
@@ -85,7 +86,6 @@ public class MongoXClient {
         client = new MongoClient(new MongoClientURI(uri, build));
         if (client == null) {
             logger.error("create MongoXClient failed");
-            System.out.println("create MongoXClient failed");
         }
     }
 
@@ -101,7 +101,6 @@ public class MongoXClient {
             client = new MongoClient(addrs, credentials);
             if (client == null) {
                 logger.error("create MongoXClient failed");
-                System.out.println("create MongoXClient failed");
             }
         } catch (Exception e) {
             System.err.println( e.getClass().getName() + ": " + e.getMessage() );
@@ -199,7 +198,11 @@ public class MongoXClient {
     public void insertDoc(Document updateObj){
         String dbName = getDBName();
         MongoCollection collect = getDataBase(dbName).getCollection(userTable);
-        collect.insertOne(updateObj);
+        try{
+            collect.insertOne(updateObj);
+        }catch (Exception e){
+            return;
+        }
     }
 
     /**
@@ -269,8 +272,60 @@ public class MongoXClient {
     }
 
 
+    public JSONObject getUserInfo(String userId) {
+        if (userId == null || userId.length() != 32) {
+            return null;
+        }
+        JSONObject jsonObject = get(userId, ConstKey.userEmail, ConstKey.userName, ConstKey.userPasswd);
+
+        return jsonObject;
+    }
+
+    public JSONObject get(String m2, String... fieldNames){
+        JSONObject jsonResult = new JSONObject();
+
+        MongoCursor<Document> cur = findIterByM2(m2, fieldNames);
+        if(cur==null){
+            return jsonResult;
+        }
+        while (cur.hasNext()) {
+            Document doc = cur.next();
+            insert(doc, jsonResult, fieldNames);
+        }
+
+        return jsonResult;
+    }
+
+    private void insert(Document doc, JSONObject jsonResult, String... fieldNames) {
+        List<String> names = asList(fieldNames);
+        for(String name : names){
+            String info = doc.getString(name);
+            if (info != null && info.length() != 0) {
+                jsonResult.put(name, info);
+            }
+        }
+    }
+
+
 
     public static void main(String[] argc){
         MongoXClient mongoXClient = MongoXClient.getInstance();
+        JSONObject jsonUserInfo = new JSONObject();
+        jsonUserInfo.put(ConstKey.userName, "1xx2xx3");
+        jsonUserInfo.put(ConstKey.userPasswd, "123xxx");
+        jsonUserInfo.put(ConstKey.userPhone, "sxs");
+        jsonUserInfo.put(ConstKey.userEmail, "ssxxx");
+        jsonUserInfo.put(ConstKey.RegisterCode, "sxs");
+        jsonUserInfo.put("_id", "e5f485f9cd9363ab82d35f6b1855dc71");
+        jsonUserInfo.put("user_id", "e5f485f9cd9363ab82d35f6b1855dc71");
+
+        Document userDoc = new Document();
+        for (Map.Entry<String, Object> entry : jsonUserInfo.entrySet()) {
+//            userDoc.put(entry.getKey(), entry.getValue().toString());
+            String key = entry.getKey();
+            String value = (String)entry.getValue();
+            userDoc.put(key, value);
+        }
+        mongoXClient.insertDoc(userDoc);
     }
 }

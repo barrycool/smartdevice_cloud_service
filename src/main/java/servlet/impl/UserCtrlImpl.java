@@ -75,7 +75,8 @@ public class UserCtrlImpl {
             jsonUserInfo.put(ConstKey.userPhone, jsonReq.getString(ConstKey.userPhone));
             jsonUserInfo.put(ConstKey.userEmail, jsonReq.getString(ConstKey.userEmail));
             jsonUserInfo.put(ConstKey.RegisterCode, jsonReq.getString(ConstKey.RegisterCode));
-        } catch (Exception r) {
+        } catch (Exception e) {
+            e.printStackTrace();
 
         }
         return jsonUserInfo;
@@ -85,7 +86,6 @@ public class UserCtrlImpl {
 
         JSONObject queryResult = new JSONObject();
         String name = jsonReq.getString(ConstKey.name);
-
         switch (name) {
             case "requestRegisterCode":
                 queryResult = sendCode(jsonReq);
@@ -148,13 +148,21 @@ public class UserCtrlImpl {
         }
     }
 
+
     public JSONObject addUser(JSONObject jsonUserInfo) {
+
 
         JSONObject queryResult = new JSONObject();
         queryResult.put(ConstKey.nameSpace, "AccountManagement");
         queryResult.put(ConstKey.name, "AddUser.Response");
-        boolean addRedisStatus = addUserRedis(jsonUserInfo);
+
+        String md5 = StringUtil.getMD5(jsonUserInfo.toJSONString());
+        jsonUserInfo.put(ConstKey.userId, md5);
+        jsonUserInfo.put("_id", md5);
+
         boolean addMongoStatus = addUserMongo(jsonUserInfo);
+        boolean addRedisStatus = addUserRedis(jsonUserInfo);
+
 
         JSONObject jsonResult = new JSONObject();
         jsonResult.put(ConstKey.code, "OK");
@@ -167,7 +175,9 @@ public class UserCtrlImpl {
     public boolean addUserMongo(JSONObject jsonUserInfo) {
         Document userDoc = new Document();
         for (Map.Entry<String, Object> entry : jsonUserInfo.entrySet()) {
-            userDoc.put(entry.getKey(), entry.getValue().toString());
+            String key = entry.getKey();
+            String value = (String)entry.getValue();
+            userDoc.put(key, value);
         }
         mongoXClient.insertDoc(userDoc);
         return true;
