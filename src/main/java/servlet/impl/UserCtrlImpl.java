@@ -10,6 +10,7 @@ import com.mongodb.client.MongoCursor;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.util.parsing.combinator.testing.Str;
 import util.ConstKey;
 import util.MailSender;
 import util.RedisUtil;
@@ -288,6 +289,9 @@ public class UserCtrlImpl {
         }
 
         String info = deviceId + ":" + deviceType + ":" + friendlyName + ":" + manufacturerName;
+        if(StringUtil.isEmpty(redisValue)){
+            return info;
+        }
         Set<String> set = new HashSet<String>(Arrays.asList(redisValue.split(",")));
         if (set.contains(info)) {
             return redisValue;
@@ -298,12 +302,14 @@ public class UserCtrlImpl {
     public JSONObject addDevice(JSONObject jsonReq) {
         String userId = jsonReq.getString("userId");
         String redisKey = RedisUtil.getRedisKey_DevList(userId);
+
         if (redisKey == null || redisKey.length() == 0) {
             return null;
         }
 
         String redisValue = RedisUtil.getRedisValue(redisKey);
         String v = addDevice(redisValue, jsonReq);
+
         if (!StringUtil.isEmpty(v)) {
             RedisTools.set(redisKey, v, ConstKey.user_device_list_over_time);
         }
