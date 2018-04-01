@@ -36,6 +36,19 @@ public class ConstKey {
     public static final String  code = "code";
     public static final String  msg = "msg";
     public static final String  result = "result";
+    public static final String  userName = "userName";
+    public static final String  userPasswd = "userPasswd";
+    public static final String  userPhone = "userPhone";
+    public static final String  userEmail= "userEmail";
+    public static final String  RegisterCode= "RegisterCode";
+    public static final String  refreshToken= "refreshToken";
+    public static final String  expiresDate= "expiresDate";
+
+
+
+
+
+
 
 
 

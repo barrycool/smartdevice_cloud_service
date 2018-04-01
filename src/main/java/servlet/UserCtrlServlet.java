@@ -43,6 +43,9 @@ public class UserCtrlServlet extends HttpServlet {
                 case "Alexa.Discovery":
                     queryResult = userCtrl.discovery(jsonReq);
                     break;
+                case "Oauth":
+                    queryResult = userCtrl.setUserToken(jsonReq);
+                    break;
                 default:
                     break;
             }

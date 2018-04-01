@@ -23,90 +23,66 @@ public class DeviceGetServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DeviceGetServlet.class);
 
     private DeviceCtrlImpl deviceCtrl = new DeviceCtrlImpl();
-    private UserCtrlImpl userCtrl = UserCtrlImpl.getUserCtrl();
 
-
-    protected void processGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-
-        JSONObject jsonReq = QueryPack.queryPack(request);
-
-        long start = System.currentTimeMillis();
+    protected JSONObject processRequest(JSONObject jsonReq){
 
         JSONObject queryResult  = null;
         try {
             String nameSpace = jsonReq.getString(ConstKey.nameSpace);
-            if(StringUtil.isEmpty(nameSpace)){
-                //TODO
-            }
-
             switch (nameSpace){
                 case "Alexa.PowerController":
                     queryResult = deviceCtrl.getDevStatus(jsonReq);
                     break;
-                case "Alexa.Discovery":
-                    queryResult = userCtrl.discovery(jsonReq);
-                    break;
-                case "AccountManagement":
-                    break;
                 default:
                     break;
             }
-            PrintUtil.print(queryResult, response);
-
         } catch (Exception e) {
             logger.error("request failed, ERROR={}", e);
         }
-
-        long end = System.currentTimeMillis();
-        SaveTraceLog.saveTraceLog(request.getRemoteAddr(), end - start, request.getRequestURL().toString());
-        return;
+        return queryResult;
     }
 
-    protected void processPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
 
+    private void post(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         long start = System.currentTimeMillis();
 
         response.setContentType("text/html;charset=UTF-8");
         JSONObject jsonReq = QueryPack.postQueryPack(request);
-        if (jsonReq == null) {
-            logger.error("request param is not valid, request={}", jsonReq);
-            return;
-        }
 
-        try {
-            JSONObject queryResult = new JSONObject();
-            String nameSpace = jsonReq.getString(ConstKey.nameSpace);
-            if(nameSpace.equals("Alexa.PowerController")){
-                queryResult = deviceCtrl.getDevStatus(jsonReq);
-                PrintUtil.print(queryResult, response);
-            }else if(nameSpace.equals("Alexa.Discovery")){
-                queryResult = userCtrl.discovery(jsonReq);
-                PrintUtil.print(queryResult, response);
-            }
+        JSONObject queryResult = processRequest(jsonReq);
+        PrintUtil.print(queryResult, response);
 
-            PrintUtil.print(queryResult, response);
-
-        } catch (Exception e) {
-            logger.error("set device failed, ERROR={}", e);
-        }
         long end = System.currentTimeMillis();
+
         SaveTraceLog.saveTraceLog(request.getRemoteAddr(), end - start, request.getRequestURL().toString());
-        return;
+
+    }
+
+    private void get(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        long start = System.currentTimeMillis();
+
+        response.setContentType("text/html;charset=UTF-8");
+        JSONObject jsonReq = QueryPack.queryPack(request);
+
+        JSONObject queryResult = processRequest(jsonReq);
+        PrintUtil.print(queryResult, response);
+
+        long end = System.currentTimeMillis();
+
+        SaveTraceLog.saveTraceLog(request.getRemoteAddr(), end - start, request.getRequestURL().toString());
+
     }
 
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        processGet(request, response);
+        get(request, response);
     }
 
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        processPost(request, response);
+        post(request, response);
     }
 
 }

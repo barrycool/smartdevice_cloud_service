@@ -63,6 +63,20 @@ public class UserCtrlImpl {
         return queryResult;
     }
 
+    public JSONObject packUserInfo(JSONObject jsonReq){
+        JSONObject jsonUserInfo = new JSONObject();
+        try {
+            jsonUserInfo.put(ConstKey.userName, jsonReq.getString(ConstKey.userName));
+            jsonUserInfo.put(ConstKey.userPasswd, jsonReq.getString(ConstKey.userPasswd));
+            jsonUserInfo.put(ConstKey.userPhone, jsonReq.getString(ConstKey.userPhone));
+            jsonUserInfo.put(ConstKey.userEmail, jsonReq.getString(ConstKey.userEmail));
+            jsonUserInfo.put(ConstKey.RegisterCode, jsonReq.getString(ConstKey.RegisterCode));
+        }catch (Exception r){
+
+        }
+        return jsonUserInfo;
+    }
+
     public JSONObject userCtrl(JSONObject jsonReq){
 
         JSONObject queryResult = new JSONObject();
@@ -72,7 +86,8 @@ public class UserCtrlImpl {
                 queryResult = sendCode(jsonReq);
                 break;
             case "AddUser":
-//                queryResult = addUser(jsonReq);
+                JSONObject jsonUserInfo = packUserInfo(jsonReq);
+                queryResult = addUser(jsonUserInfo);
                 break;
             default:
                 break;
@@ -98,13 +113,13 @@ public class UserCtrlImpl {
         }
         while (cur.hasNext()) {
             Document doc = cur.next();
-            insertQueryResult(doc, jsonResult, fieldNames);
+            addUser(doc, jsonResult, fieldNames);
         }
 
         return jsonResult;
     }
 
-    private void insertQueryResult(Document doc, JSONObject jsonResult, String... fieldNames) {
+    private void addUser(Document doc, JSONObject jsonResult, String... fieldNames) {
         List<String> names = asList(fieldNames);
         for (String name : names) {
             String info = doc.getString(name);
@@ -114,14 +129,24 @@ public class UserCtrlImpl {
         }
     }
 
-    public void insertNewUser(JSONObject jsonUserInfo){
+    public JSONObject addUser(JSONObject jsonUserInfo){
         Document userDoc = new Document();
 
         for(Map.Entry<String, Object> entry : jsonUserInfo.entrySet()){
             userDoc.put(entry.getKey(), entry.getValue().toString());
         }
-
         mongoXClient.insertDoc(userDoc);
+
+        JSONObject queryResult = new JSONObject();
+        queryResult.put(ConstKey.nameSpace, "AccountManagement");
+        queryResult.put(ConstKey.name, "AddUser.Response");
+
+        JSONObject jsonResult = new JSONObject();
+        jsonResult.put(ConstKey.code, "OK");
+        jsonResult.put(ConstKey.msg, "add user successfully");
+        queryResult.put(ConstKey.result, jsonResult);
+
+        return queryResult;
     }
 
     public void updateUserInfo(JSONObject jsonUserInfo){
@@ -130,6 +155,16 @@ public class UserCtrlImpl {
 
 
     public JSONObject setUserToken(JSONObject jsonReq){
+        String userId = RedisUtil.getUserId(jsonReq);
+        String redisKey = RedisUtil.getRedisKey_UserToken(jsonReq);
+        if(StringUtil.isEmpty(userId) || StringUtil.isEmpty(redisKey)){
+            return null;
+        }
+        RedisTools.set(redisKey, userId, ConstKey.user_token_over_time);
+        return null;
+    }
+
+    public JSONObject updateToken(JSONObject jsonReq){
         String userId = RedisUtil.getUserId(jsonReq);
         String redisKey = RedisUtil.getRedisKey_UserToken(jsonReq);
         if(StringUtil.isEmpty(userId) || StringUtil.isEmpty(redisKey)){
@@ -174,8 +209,15 @@ public class UserCtrlImpl {
             RedisTools.set(redisKey, v, ConstKey.user_device_list_over_time);
         }
 
+        JSONObject queryResult = new JSONObject();
+        queryResult.put(ConstKey.nameSpace, "DeviceManagement");
+        queryResult.put(ConstKey.name, "AddDevice.Response");
+
         JSONObject jsonResult = new JSONObject();
-        return jsonResult;
+        jsonResult.put(ConstKey.code, "OK");
+        jsonResult.put(ConstKey.msg, "add device successfully");
+        queryResult.put(ConstKey.result, jsonResult);
+        return queryResult;
     }
 
 
