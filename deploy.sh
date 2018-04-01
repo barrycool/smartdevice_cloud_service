@@ -1,4 +1,4 @@
-#/bin/bash
+#!/usr/bin/env bash
 
 CODE_HOME=/Users/fanyuanyuan/workspace/smartdevice_cloud_service
 JETTY_HOME=/opt/jetty
