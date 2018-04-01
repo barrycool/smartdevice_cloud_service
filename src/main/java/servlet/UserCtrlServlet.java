@@ -29,7 +29,7 @@ public class UserCtrlServlet extends HttpServlet {
 
         JSONObject queryResult = new JSONObject();
         try {
-            String nameSpace = jsonReq.getString("nameSpace");
+            String nameSpace = jsonReq.getString(ConstKey.nameSpace);
             if(StringUtil.isEmpty(nameSpace)){
                 return null;
             }

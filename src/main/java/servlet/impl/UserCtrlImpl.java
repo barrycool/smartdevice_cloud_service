@@ -85,6 +85,7 @@ public class UserCtrlImpl {
 
         JSONObject queryResult = new JSONObject();
         String name = jsonReq.getString(ConstKey.name);
+
         switch (name) {
             case "requestRegisterCode":
                 queryResult = sendCode(jsonReq);
