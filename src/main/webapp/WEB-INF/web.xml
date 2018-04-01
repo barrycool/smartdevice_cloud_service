@@ -30,7 +30,7 @@
         <servlet-class>servlet.DeviceGetServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>send</servlet-name>
+        <servlet-name>user_ctrl</servlet-name>
         <servlet-class>servlet.UserCtrlServlet</servlet-class>
     </servlet>
 
@@ -47,7 +47,7 @@
         <url-pattern>/get</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>send</servlet-name>
-        <url-pattern>/send</url-pattern>
+        <servlet-name>user_ctrl</servlet-name>
+        <url-pattern>/user_ctrl</url-pattern>
     </servlet-mapping>
 </web-app>
