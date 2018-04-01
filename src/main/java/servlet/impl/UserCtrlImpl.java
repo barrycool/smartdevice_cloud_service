@@ -74,7 +74,7 @@ public class UserCtrlImpl {
             jsonUserInfo.put(ConstKey.userPasswd, jsonReq.getString(ConstKey.userPasswd));
             jsonUserInfo.put(ConstKey.userPhone, jsonReq.getString(ConstKey.userPhone));
             jsonUserInfo.put(ConstKey.userEmail, jsonReq.getString(ConstKey.userEmail));
-            jsonUserInfo.put(ConstKey.RegisterCode, jsonReq.getString(ConstKey.RegisterCode));
+//            jsonUserInfo.put(ConstKey.RegisterCode, jsonReq.getString(ConstKey.RegisterCode));
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -126,7 +126,7 @@ public class UserCtrlImpl {
     public JSONObject get(String m2, String... fieldNames) {
         JSONObject jsonResult = new JSONObject();
 
-        MongoCursor<Document> cur = mongoXClient.findIterByM2(m2, fieldNames);
+        MongoCursor<Document> cur = mongoXClient.findIterByUserId(m2, fieldNames);
         if (cur == null) {
             return jsonResult;
         }

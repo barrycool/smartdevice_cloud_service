@@ -124,7 +124,7 @@ public class MongoXClient {
        return userDB;
     }
 
-    private MongoCursor<Document> findIter(String m2, String k, Object v, final String... fieldNames) {
+    private MongoCursor<Document> findIter(String userId, String k, Object v, final String... fieldNames) {
         BasicDBObject queryObj = new BasicDBObject();
         queryObj.append(k, v);
 
@@ -141,9 +141,9 @@ public class MongoXClient {
         return findIterable.iterator();
     }
 
-    public MongoCursor<Document> findIterByM2(String m2, final String... fieldNames) {
+    public MongoCursor<Document> findIterByUserId(String userId, final String... fieldNames) {
         BasicDBObject queryObj = new BasicDBObject();
-        queryObj.append(ConstKey.userId, m2);
+        queryObj.append(ConstKey.userId, userId);
         String dbName = getDBName();
         if(dbName==null){
             return null;
@@ -281,10 +281,10 @@ public class MongoXClient {
         return jsonObject;
     }
 
-    public JSONObject get(String m2, String... fieldNames){
+    public JSONObject get(String userId, String... fieldNames){
         JSONObject jsonResult = new JSONObject();
 
-        MongoCursor<Document> cur = findIterByM2(m2, fieldNames);
+        MongoCursor<Document> cur = findIterByUserId(userId, fieldNames);
         if(cur==null){
             return jsonResult;
         }
@@ -310,22 +310,24 @@ public class MongoXClient {
 
     public static void main(String[] argc){
         MongoXClient mongoXClient = MongoXClient.getInstance();
-        JSONObject jsonUserInfo = new JSONObject();
-        jsonUserInfo.put(ConstKey.userName, "1xx2xx3");
-        jsonUserInfo.put(ConstKey.userPasswd, "123xxx");
-        jsonUserInfo.put(ConstKey.userPhone, "sxs");
-        jsonUserInfo.put(ConstKey.userEmail, "ssxxx");
-        jsonUserInfo.put(ConstKey.RegisterCode, "sxs");
-        jsonUserInfo.put("_id", "e5f485f9cd9363ab82d35f6b1855dc71");
-        jsonUserInfo.put("user_id", "e5f485f9cd9363ab82d35f6b1855dc71");
+//        JSONObject jsonUserInfo = new JSONObject();
+//        jsonUserInfo.put(ConstKey.userName, "1xx2xx3");
+//        jsonUserInfo.put(ConstKey.userPasswd, "123xxx");
+//        jsonUserInfo.put(ConstKey.userPhone, "sxs");
+//        jsonUserInfo.put(ConstKey.userEmail, "ssxxx");
+//        jsonUserInfo.put(ConstKey.RegisterCode, "sxs");
+//        jsonUserInfo.put("_id", "e5f485f9cd9363ab82d35f6b1855dc71");
+//        jsonUserInfo.put("user_id", "e5f485f9cd9363ab82d35f6b1855dc71");
+//
+//        Document userDoc = new Document();
+//        for (Map.Entry<String, Object> entry : jsonUserInfo.entrySet()) {
+////            userDoc.put(entry.getKey(), entry.getValue().toString());
+//            String key = entry.getKey();
+//            String value = (String)entry.getValue();
+//            userDoc.put(key, value);
+//        }
+//        mongoXClient.insertDoc(userDoc);
 
-        Document userDoc = new Document();
-        for (Map.Entry<String, Object> entry : jsonUserInfo.entrySet()) {
-//            userDoc.put(entry.getKey(), entry.getValue().toString());
-            String key = entry.getKey();
-            String value = (String)entry.getValue();
-            userDoc.put(key, value);
-        }
-        mongoXClient.insertDoc(userDoc);
+        System.out.println(mongoXClient.getUserInfo("e5f485f9cd9363ab82d35f6b1855dc71"));
     }
 }

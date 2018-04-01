@@ -220,7 +220,12 @@ public class StringUtil {
     }
 
     public static void main(String[] argc){
-        System.out.print(getMD5("{'name_space':'AccountManagement','name':'AddUser','userName':'barry test','userPasswd':'test123','userEmail':'404414244@qq.com','RegisterCode':'865395'}"));
+        while(true){
+            System.out.println(getMD5("{'name_space':'AccountManagement1','name':'AddUser','userName':'barry test','userPasswd':'test123','userEmail':'404414244@qq.com','RegisterCode':'865395'}"));
+            System.out.println(getMD5("{'name_space':'AccountManagement2','name':'AddUser','userName':'barry test','userPasswd':'test123','userEmail':'404414244@qq.com','RegisterCode':'865395'}"));
+            System.out.println(getMD5("{'name_space':'AccountManagement3','name':'AddUser','userName':'barry test','userPasswd':'test123','userEmail':'404414244@qq.com','RegisterCode':'865395'}"));
+
+        }
     }
 
 }
