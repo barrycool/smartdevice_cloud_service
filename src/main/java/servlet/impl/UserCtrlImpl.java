@@ -115,25 +115,23 @@ public class UserCtrlImpl {
 
         String logInName = jsonReq.getString(ConstKey.loginName);
         String passwd = jsonReq.getString("passwd");
-        String redisKey_userPasswd = RedisUtil.getRedisKey_UserPasswd(logInName);
-        String redisPasswd = RedisTools.get(redisKey_userPasswd);
-        if(StringUtil.isEmpty(passwd) || StringUtil.isEmpty(redisPasswd) || !passwd.equals(redisPasswd)){
+        String redisKey_userLogin = RedisUtil.getRedisKey_userLogin(logInName);
+        String strUserInfo = RedisTools.get(redisKey_userLogin);
+        if(StringUtil.isEmpty(passwd) || StringUtil.isEmpty(strUserInfo) ){
             jsonResult.put(ConstKey.code, "Failed");
             jsonResult.put(ConstKey.msg, "user_name or passwd not correct!!!");
             queryResult.put(ConstKey.result, jsonReq);
             return queryResult;
         }
 
-        JSONObject jsonUserInfo = new JSONObject();
-        String redisKey_userInfo = RedisUtil.getRedisKey_UserInfo(jsonReq);
-        String v = RedisTools.get(redisKey_userInfo);
-        if(StringUtil.isEmpty(v)){
+        JSONObject jsonUserInfo = JSON.parseObject(strUserInfo);
+        String redisPasswd = jsonUserInfo.getString(ConstKey.userPasswd);
+        if(!passwd.equals(redisPasswd)){
             jsonResult.put(ConstKey.code, "Failed");
-            jsonResult.put(ConstKey.msg, "user_id not exist!!!");
-            queryResult.put(ConstKey.result, jsonResult);
+            jsonResult.put(ConstKey.msg, "user_name or passwd not correct!!!");
+            queryResult.put(ConstKey.result, jsonReq);
             return queryResult;
         }
-        jsonUserInfo = JSON.parseObject(v);
         jsonResult.put(ConstKey.userInfo, jsonUserInfo);
         queryResult.put(ConstKey.result, jsonResult);
         return queryResult;
@@ -232,15 +230,13 @@ public class UserCtrlImpl {
         String v = jsonUserInfo.toJSONString();
         RedisTools.set(redisKey_userInfo, v, ConstKey.user_info_over_time);
 
-        String passwd = jsonUserInfo.getString(ConstKey.userPasswd);
         String userPhone = jsonUserInfo.getString(ConstKey.userPhone);
-
-        String redisKey_userPhone = RedisUtil.getRedisKey_UserPasswd(userPhone);
-        RedisTools.set(redisKey_userPhone, passwd, ConstKey.user_passwd_over_time);
+        String redisKey_userPhoneLogin = RedisUtil.getRedisKey_userLogin(userPhone);
+        RedisTools.set(redisKey_userPhoneLogin, v, ConstKey.user_login_name_over_time);
 
         String userMail = jsonUserInfo.getString(ConstKey.userEmail);
-        String redisKey_userMail = RedisUtil.getRedisKey_UserPasswd(userMail);
-        RedisTools.set(redisKey_userMail, passwd, ConstKey.user_passwd_over_time);
+        String redisKey_userMailLogin = RedisUtil.getRedisKey_userLogin(userMail);
+        RedisTools.set(redisKey_userMailLogin, v, ConstKey.user_login_name_over_time);
         return true;
     }
 
