@@ -6,6 +6,7 @@ import log.SaveTraceLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import servlet.impl.DeviceCtrlImpl;
+import util.ConstKey;
 import util.PrintUtil;
 import util.StringUtil;
 
@@ -31,7 +32,7 @@ public class DeviceCtrlServlet extends HttpServlet {
             return null;
         }
         try {
-            String nameSpace = jsonReq.getString("nameSpace");
+            String nameSpace = jsonReq.getString(ConstKey.nameSpace);
             if(StringUtil.isEmpty(nameSpace)){
                 return null;
             }

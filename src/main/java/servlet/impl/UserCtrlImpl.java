@@ -1,7 +1,6 @@
 package servlet.impl;
 
 import client.MongoXClient;
-import client.RedisClient;
 import client.RedisTools;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -10,7 +9,6 @@ import com.mongodb.client.MongoCursor;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scala.util.parsing.combinator.testing.Str;
 import util.ConstKey;
 import util.MailSender;
 import util.RedisUtil;
@@ -115,7 +113,7 @@ public class UserCtrlImpl {
         jsonResult.put(ConstKey.msg, "logIn successfully");
 
         String logInName = jsonReq.getString(ConstKey.loginName);
-        String passwd = jsonReq.getString("passwd");
+        String passwd = jsonReq.getString(ConstKey.userPasswd);
         String redisKey_userLogin = RedisUtil.getRedisKey_userLogin(logInName);
         String strUserInfo = RedisTools.get(redisKey_userLogin);
         if(StringUtil.isEmpty(passwd) || StringUtil.isEmpty(strUserInfo) ){
@@ -135,7 +133,6 @@ public class UserCtrlImpl {
         }
         jsonUserInfo.remove(ConstKey.userPasswd);
         jsonUserInfo.remove("_id");
-//        jsonUserInfo.remove(ConstKey.userId);
         jsonResult.put(ConstKey.userInfo, jsonUserInfo);
         queryResult.put(ConstKey.result, jsonResult);
         return queryResult;
@@ -232,7 +229,7 @@ public class UserCtrlImpl {
     public boolean addUserRedis(JSONObject jsonUserInfo) {
         String redisKey_userInfo = RedisUtil.getRedisKey_UserInfo(jsonUserInfo);
         String v = jsonUserInfo.toJSONString();
-        RedisTools.set(redisKey_userInfo, v, ConstKey.user_info_over_time);
+        RedisTools.set(redisKey_userInfo, v, ConstKey.user_id_over_time);
 
         String userPhone = jsonUserInfo.getString(ConstKey.userPhone);
         String redisKey_userPhoneLogin = RedisUtil.getRedisKey_userLogin(userPhone);
@@ -300,7 +297,7 @@ public class UserCtrlImpl {
     }
 
     public JSONObject addDevice(JSONObject jsonReq) {
-        String userId = jsonReq.getString("userId");
+        String userId = jsonReq.getString(ConstKey.userId);
         String redisKey = RedisUtil.getRedisKey_DevList(userId);
 
         if (redisKey == null || redisKey.length() == 0) {

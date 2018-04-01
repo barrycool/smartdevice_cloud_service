@@ -20,12 +20,12 @@ public class ConstKey {
     public static final int user_token_over_time = 3600*24*2;
 
     //rediskey前缀:user_id对应用户信息
-    public static final String redis_key_prefix_user_info = "user_info:";
-    public static final int user_info_over_time = 0;
+    public static final String redis_key_prefix_user_id = "user_id:";
+    public static final int user_id_over_time = 0;
 
 
     //rediskey前缀:注册码对应用户信息
-    public static final String redis_key_prefix_send_code_info = "user_send_code:";
+    public static final String redis_key_prefix_send_code = "user_send_code:";
     public static final int send_code_over_time = 60*30;
 
     //rediskey前缀:用户名密码
@@ -40,8 +40,8 @@ public class ConstKey {
     public static final String value = "value";
     public static final String devices = "devices";
 
-    public static final String  userId = "user_id";
-    public static final String  deviceId = "device_id";
+    public static final String  userId = "userId";
+    public static final String  deviceId = "deviceId";
     public static final String  deviceType = "deviceType";
     public static final String  friendlyName = "firendlyName";
     public static final String  manufactureName = "manufactureName";
@@ -50,7 +50,7 @@ public class ConstKey {
     public static final String  msg = "msg";
     public static final String  result = "result";
     public static final String  userName = "userName";
-    public static final String  userPasswd = "userPasswd";
+    public static final String  userPasswd = "passwd";
     public static final String  userPhone = "userPhone";
     public static final String  userEmail= "userEmail";
     public static final String  RegisterCode= "RegisterCode";
