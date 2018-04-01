@@ -68,7 +68,7 @@ public class RedisUtil {
         if(StringUtil.isEmpty(mailInfo)){
             return null;
         }
-        return ConstKey.redis_key_prefix_send_code + mailInfo + ":";
+        return ConstKey.redis_key_prefix_register_code + mailInfo + ":";
     }
 
     public static String getRedisKey_userLogin(String login){

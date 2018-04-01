@@ -63,7 +63,7 @@ public class UserCtrlImpl {
             queryResult.put(ConstKey.result, jsonResult);
 
             String redisKey_sendCode = RedisUtil.getRedisKey_sendCode(userMailAddr);
-            RedisTools.set(redisKey_sendCode, code, ConstKey.send_code_over_time);
+            RedisTools.set(redisKey_sendCode, code, ConstKey.register_code_over_time);
         }
         return queryResult;
     }

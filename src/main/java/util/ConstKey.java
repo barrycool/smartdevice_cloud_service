@@ -24,11 +24,11 @@ public class ConstKey {
     public static final int user_id_over_time = 0;
 
 
-    //rediskey前缀:注册码对应用户信息
-    public static final String redis_key_prefix_send_code = "user_send_code:";
-    public static final int send_code_over_time = 60*30;
+    //rediskey前缀:注册码
+    public static final String redis_key_prefix_register_code = "user_register_code:";
+    public static final int register_code_over_time = 60*30;
 
-    //rediskey前缀:用户名密码
+    //rediskey前缀:登陆用户名对应用户信息
     public static final String redis_key_prefix_user_login_name = "user_login_name:";
     public static final int user_login_name_over_time = 0;
 
