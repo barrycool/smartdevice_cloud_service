@@ -23,6 +23,12 @@ public class ConstKey {
     public static final String redis_key_prefix_user_info = "user_info:";
     public static final int user_info_over_time = 0;
 
+    //rediskey前缀:注册码对应用户信息
+    public static final String redis_key_prefix_send_code_info = "user_send_code:";
+    public static final int send_code_over_time = 30;
+
+
+
 
     public static final String nameSpace = "name_space";
     public static final String name = "name";

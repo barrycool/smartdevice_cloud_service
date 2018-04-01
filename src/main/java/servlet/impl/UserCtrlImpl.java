@@ -62,7 +62,9 @@ public class UserCtrlImpl {
             jsonResult.put(ConstKey.code, "OK");
             jsonResult.put(ConstKey.msg, "send register code successfully");
             queryResult.put(ConstKey.result, jsonResult);
-            sendUserCodeMap.put(userMailAddr, code);
+
+            String redisKey_sendCode = RedisUtil.getRedisKey_sendCode(userMailAddr);
+            RedisTools.set(redisKey_sendCode, code, ConstKey.send_code_over_time);
         }
         return queryResult;
     }
@@ -74,7 +76,7 @@ public class UserCtrlImpl {
             jsonUserInfo.put(ConstKey.userPasswd, jsonReq.getString(ConstKey.userPasswd));
             jsonUserInfo.put(ConstKey.userPhone, jsonReq.getString(ConstKey.userPhone));
             jsonUserInfo.put(ConstKey.userEmail, jsonReq.getString(ConstKey.userEmail));
-//            jsonUserInfo.put(ConstKey.RegisterCode, jsonReq.getString(ConstKey.RegisterCode));
+            jsonUserInfo.put(ConstKey.RegisterCode, jsonReq.getString(ConstKey.RegisterCode));
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -151,22 +153,43 @@ public class UserCtrlImpl {
 
     public JSONObject addUser(JSONObject jsonUserInfo) {
 
-
         JSONObject queryResult = new JSONObject();
         queryResult.put(ConstKey.nameSpace, "AccountManagement");
         queryResult.put(ConstKey.name, "AddUser.Response");
 
-        String md5 = StringUtil.getMD5(jsonUserInfo.toJSONString());
-        jsonUserInfo.put(ConstKey.userId, md5);
-        jsonUserInfo.put("_id", md5);
-
-        boolean addMongoStatus = addUserMongo(jsonUserInfo);
-        boolean addRedisStatus = addUserRedis(jsonUserInfo);
-
-
         JSONObject jsonResult = new JSONObject();
         jsonResult.put(ConstKey.code, "OK");
         jsonResult.put(ConstKey.msg, "add user successfully");
+
+        String sendCode = jsonUserInfo.getString(ConstKey.RegisterCode);
+        String mailInfo = jsonUserInfo.getString(ConstKey.userEmail);
+
+        String redisKey_sendCode = RedisUtil.getRedisKey_sendCode(mailInfo);
+        String v = RedisTools.get(redisKey_sendCode);
+        if(StringUtil.isEmpty(sendCode) || StringUtil.isEmpty(v) || !v.equals(sendCode)){
+            jsonResult.put(ConstKey.code, "Failed");
+            jsonResult.put(ConstKey.msg, "register code is error or invalid!!!");
+            queryResult.put(ConstKey.result, jsonResult);
+            return  queryResult;
+        }
+
+        jsonUserInfo.remove(ConstKey.RegisterCode);
+        jsonUserInfo.remove(ConstKey.userName);
+
+        String userId = StringUtil.getMD5(jsonUserInfo.toJSONString());
+        jsonUserInfo.put(ConstKey.userId, userId);
+        jsonUserInfo.put("_id", userId);
+
+        JSONObject jsonExistUserInfo = mongoXClient.getUserInfo(userId);
+        if(jsonExistUserInfo!=null && jsonExistUserInfo.size()!=0){
+            jsonResult.put(ConstKey.code, "Failed");
+            jsonResult.put(ConstKey.msg, "add user has exist");
+            queryResult.put(ConstKey.result, jsonResult);
+            return  queryResult;
+        }
+        boolean addMongoStatus = addUserMongo(jsonUserInfo);
+        boolean addRedisStatus = addUserRedis(jsonUserInfo);
+
         queryResult.put(ConstKey.result, jsonResult);
 
         return queryResult;
