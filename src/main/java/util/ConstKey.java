@@ -42,9 +42,9 @@ public class ConstKey {
 
     public static final String  userId = "user_id";
     public static final String  deviceId = "device_id";
-    public static final String  deviecType = "deviecType";
+    public static final String  deviceType = "deviceType";
     public static final String  friendlyName = "firendlyName";
-    public static final String  manufacturerName = "manufacturerName";
+    public static final String  manufactureName = "manufactureName";
     public static final String  userAccount = "userAccount";
     public static final String  code = "code";
     public static final String  msg = "msg";

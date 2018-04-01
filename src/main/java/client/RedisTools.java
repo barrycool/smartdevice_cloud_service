@@ -24,11 +24,10 @@ public class RedisTools extends Thread{
         return redisClient.get(key);
     }
 
-//    public static void main(String[] argc){
-//        JSONObject jsonUserInfo = new JSONObject();
-//        jsonUserInfo.put("")
-//        String redisKey_userInfo = RedisUtil.getRedisKey_UserInfo(jsonUserInfo);
-//        String v = jsonUserInfo.toJSONString();
-//        RedisTools.set(redisKey_userInfo, v, ConstKey.user_info_over_time);
-//    }
+    public static void main(String[] argc){
+        JSONObject jsonUserInfo = new JSONObject();
+        jsonUserInfo.put("token", "2222");
+        String redisKey_userInfo = RedisUtil.getRedisKey_DevList("4e3a350ef7d0948a9f82a9431cc29e63");
+        System.out.println(RedisTools.get(redisKey_userInfo));
+    }
 }

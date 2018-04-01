@@ -278,16 +278,16 @@ public class UserCtrlImpl {
             return redisValue;
         }
         String deviceId = jsonReq.getString(ConstKey.deviceId);
-        String deviecType = jsonReq.getString(ConstKey.deviecType);
+        String deviceType = jsonReq.getString(ConstKey.deviceType);
         String friendlyName = jsonReq.getString(ConstKey.friendlyName);
-        String manufacturerName = jsonReq.getString(ConstKey.manufacturerName);
+        String manufacturerName = jsonReq.getString(ConstKey.manufactureName);
 
-        if (StringUtil.isEmpty(deviceId) || StringUtil.isEmpty(deviecType) ||
+        if (StringUtil.isEmpty(deviceId) || StringUtil.isEmpty(deviceType) ||
                 StringUtil.isEmpty(friendlyName) || StringUtil.isEmpty(manufacturerName)) {
             return redisValue;
         }
 
-        String info = deviceId + ":" + deviecType + ":" + friendlyName + ":" + manufacturerName;
+        String info = deviceId + ":" + deviceType + ":" + friendlyName + ":" + manufacturerName;
         Set<String> set = new HashSet<String>(Arrays.asList(redisValue.split(",")));
         if (set.contains(info)) {
             return redisValue;
@@ -340,9 +340,9 @@ public class UserCtrlImpl {
             }
             JSONObject jsonDev = new JSONObject();
             jsonDev.put(ConstKey.deviceId, infos[0]);
-            jsonDev.put(ConstKey.deviecType, infos[1]);
+            jsonDev.put(ConstKey.deviceType, infos[1]);
             jsonDev.put(ConstKey.friendlyName, infos[2]);
-            jsonDev.put(ConstKey.manufacturerName, infos[3]);
+            jsonDev.put(ConstKey.manufactureName, infos[3]);
             jsonDevList.add(jsonDev);
         }
         jsonResult.put(ConstKey.devices, jsonDevList);
