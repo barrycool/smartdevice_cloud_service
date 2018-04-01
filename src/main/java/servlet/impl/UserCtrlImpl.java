@@ -120,7 +120,7 @@ public class UserCtrlImpl {
         if(StringUtil.isEmpty(passwd) || StringUtil.isEmpty(strUserInfo) ){
             jsonResult.put(ConstKey.code, "Failed");
             jsonResult.put(ConstKey.msg, "user_name or passwd not correct!!!");
-            queryResult.put(ConstKey.result, jsonReq);
+            queryResult.put(ConstKey.result, jsonResult);
             return queryResult;
         }
 
@@ -132,6 +132,7 @@ public class UserCtrlImpl {
             queryResult.put(ConstKey.result, jsonResult);
             return queryResult;
         }
+        jsonUserInfo.remove(ConstKey.userPasswd);
         jsonResult.put(ConstKey.userInfo, jsonUserInfo);
         queryResult.put(ConstKey.result, jsonResult);
         return queryResult;
