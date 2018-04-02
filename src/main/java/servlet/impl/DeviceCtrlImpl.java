@@ -57,7 +57,7 @@ public class DeviceCtrlImpl {
         String redisKey = RedisUtil.getRedisKey_DevStatus(jsonReq);
         String status = RedisTools.set(redisKey, ctrlValue, ConstKey.user_device_status_over_time);
         JSONObject jsonCtrl = new JSONObject();
-        jsonCtrl.put(ConstKey.name, jsonReq.getString(ConstKey.name));
+        jsonCtrl.put(ConstKey.name, "powerState");
         jsonCtrl.put(ConstKey.value, ctrlValue);
         jsonCtrl.put(ConstKey.nameSpace, "Alexa.PowerController");
 
