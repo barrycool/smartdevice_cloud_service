@@ -24,8 +24,8 @@ public class DeviceCtrlImpl {
     private static JSONObject deviceOpenStatus = new JSONObject();
     private static JSONObject deviceClosedStatus = new JSONObject();
     static{
-        deviceOpenStatus.put("status", "on");
-        deviceClosedStatus.put("status", "off");
+        deviceOpenStatus.put("status", "ON");
+        deviceClosedStatus.put("status", "OFF");
     }
 
 
@@ -33,10 +33,10 @@ public class DeviceCtrlImpl {
     public static Map<String, String> mapCtrl = new HashMap<String, String>();
 
     static {
-        mapCtrl.put("TurnOn", "on");
-        mapCtrl.put("TurnOff", "off");
-        mapCtrl.put("on", "TurnOn");
-        mapCtrl.put("off", "TurnOff");
+        mapCtrl.put("TurnOn", "ON");
+        mapCtrl.put("TurnOff", "OFF");
+        mapCtrl.put("ON", "TurnOn");
+        mapCtrl.put("OFF", "TurnOff");
     }
 
     public String convertCtrlName(String name){
