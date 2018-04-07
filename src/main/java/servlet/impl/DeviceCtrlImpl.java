@@ -6,6 +6,8 @@ import client.RedisFactory;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import device.DeviceFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import util.ConstKey;
 import util.RedisUtil;
 import util.StringUtil;
@@ -16,6 +18,7 @@ import java.util.*;
  * Created by fanyuanyuan on 2018/3/10.
  */
 public class DeviceCtrlImpl {
+    private static final Logger logger = LoggerFactory.getLogger(DeviceCtrlImpl.class);
 
 //    private MongoXClient mongoXClient = MongoXClient.getInstance();
 
@@ -56,6 +59,7 @@ public class DeviceCtrlImpl {
         String ctrlValue = convertCtrlName(name);
         String redisKey = RedisUtil.getRedisKey_DevStatus(jsonReq);
         String status = RedisTools.set(redisKey, ctrlValue, ConstKey.user_device_status_over_time);
+        logger.error("device_id, status={}", redisKey, status);
         JSONObject jsonCtrl = new JSONObject();
         jsonCtrl.put(ConstKey.name, "powerState");
         jsonCtrl.put(ConstKey.value, ctrlValue);
@@ -64,6 +68,7 @@ public class DeviceCtrlImpl {
         JSONObject jsonHealth = new JSONObject();
         jsonHealth.put(ConstKey.name, "connectivity");
         if(!"OK".equals(status)){
+            jsonCtrl.put(ConstKey.value, "OFF");
             ctrlValue = "UNREACHABLE";
         }
         jsonHealth.put(ConstKey.value, ctrlValue);
@@ -83,14 +88,15 @@ public class DeviceCtrlImpl {
     }
 
     public JSONObject getDevStatus(JSONObject jsonReq){
+        JSONObject jsonCtrl = new JSONObject();
+
         String redisKey = RedisUtil.getRedisKey_DevStatus(jsonReq);
         String redisValue = RedisUtil.getRedisValue(redisKey);
         if(StringUtil.isEmpty(redisValue)){
+            jsonCtrl.put(ConstKey.value, "OFF");
             redisValue = "UNREACHABLE";
         }
-        JSONObject jsonCtrl = new JSONObject();
         jsonCtrl.put(ConstKey.name, jsonReq.getString(ConstKey.name));
-        jsonCtrl.put(ConstKey.value, redisValue);
         jsonCtrl.put(ConstKey.nameSpace, "Alexa.PowerController");
 
         JSONObject jsonHealth = new JSONObject();
