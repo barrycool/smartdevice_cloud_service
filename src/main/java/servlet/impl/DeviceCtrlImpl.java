@@ -70,6 +70,8 @@ public class DeviceCtrlImpl {
         if(!"OK".equals(status)){
             jsonCtrl.put(ConstKey.value, "OFF");
             ctrlValue = "UNREACHABLE";
+        }else{
+            ctrlValue = "OK";
         }
         jsonHealth.put(ConstKey.value, ctrlValue);
         jsonHealth.put(ConstKey.nameSpace, "Alexa.EndpointHealth");
@@ -96,6 +98,8 @@ public class DeviceCtrlImpl {
         if(StringUtil.isEmpty(redisValue)){
             jsonCtrl.put(ConstKey.value, "OFF");
             redisValue = "UNREACHABLE";
+        }else{
+            redisValue = "OK";
         }
         jsonCtrl.put(ConstKey.name, jsonReq.getString(ConstKey.name));
         jsonCtrl.put(ConstKey.nameSpace, "Alexa.PowerController");
