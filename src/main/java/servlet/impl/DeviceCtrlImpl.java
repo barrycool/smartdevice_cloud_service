@@ -92,6 +92,7 @@ public class DeviceCtrlImpl {
 
         String redisKey = RedisUtil.getRedisKey_DevStatus(jsonReq);
         String redisValue = RedisUtil.getRedisValue(redisKey);
+        jsonCtrl.put(ConstKey.value, redisValue);
         if(StringUtil.isEmpty(redisValue)){
             jsonCtrl.put(ConstKey.value, "OFF");
             redisValue = "UNREACHABLE";
