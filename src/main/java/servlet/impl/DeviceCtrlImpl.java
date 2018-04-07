@@ -60,7 +60,7 @@ public class DeviceCtrlImpl {
         String healthValue = "OK";
         String redisKey = RedisUtil.getRedisKey_DevStatus(jsonReq);
         String status = RedisTools.set(redisKey, ctrlValue, ConstKey.user_device_status_over_time);
-        logger.error("device_id, status={}", redisKey, status);
+        logger.error("device_id={}, status={}", redisKey, status);
         JSONObject jsonCtrl = new JSONObject();
         jsonCtrl.put(ConstKey.name, "powerState");
         jsonCtrl.put(ConstKey.value, ctrlValue);
