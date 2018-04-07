@@ -57,6 +57,7 @@ public class DeviceCtrlImpl {
     public JSONObject setDevStatus(JSONObject jsonReq){
         String name = jsonReq.getString(ConstKey.name);
         String ctrlValue = convertCtrlName(name);
+        String healthValue = "OK";
         String redisKey = RedisUtil.getRedisKey_DevStatus(jsonReq);
         String status = RedisTools.set(redisKey, ctrlValue, ConstKey.user_device_status_over_time);
         logger.error("device_id, status={}", redisKey, status);
@@ -69,11 +70,9 @@ public class DeviceCtrlImpl {
         jsonHealth.put(ConstKey.name, "connectivity");
         if(!"OK".equals(status)){
             jsonCtrl.put(ConstKey.value, "OFF");
-            ctrlValue = "UNREACHABLE";
-        }else{
-            ctrlValue = "OK";
+            healthValue = "UNREACHABLE";
         }
-        jsonHealth.put(ConstKey.value, ctrlValue);
+        jsonHealth.put(ConstKey.value, healthValue);
         jsonHealth.put(ConstKey.nameSpace, "Alexa.EndpointHealth");
 
         JSONArray jsonProperties = new JSONArray();
@@ -94,19 +93,18 @@ public class DeviceCtrlImpl {
 
         String redisKey = RedisUtil.getRedisKey_DevStatus(jsonReq);
         String redisValue = RedisUtil.getRedisValue(redisKey);
+        String healthValue = "OK";
         jsonCtrl.put(ConstKey.value, redisValue);
         if(StringUtil.isEmpty(redisValue)){
             jsonCtrl.put(ConstKey.value, "OFF");
-            redisValue = "UNREACHABLE";
-        }else{
-            redisValue = "OK";
+            healthValue = "UNREACHABLE";
         }
         jsonCtrl.put(ConstKey.name, jsonReq.getString(ConstKey.name));
         jsonCtrl.put(ConstKey.nameSpace, "Alexa.PowerController");
 
         JSONObject jsonHealth = new JSONObject();
         jsonHealth.put(ConstKey.name, "connectivity");
-        jsonHealth.put(ConstKey.value, redisValue);
+        jsonHealth.put(ConstKey.value, healthValue);
         jsonHealth.put(ConstKey.nameSpace, "Alexa.EndpointHealth");
 
         JSONArray jsonProperties = new JSONArray();
