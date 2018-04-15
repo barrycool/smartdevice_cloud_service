@@ -22,7 +22,7 @@ import java.io.*;
 public class DeviceCtrlServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DeviceCtrlServlet.class);
 
-    private DeviceCtrlImpl deviceCtrl = new DeviceCtrlImpl();
+    private DeviceCtrlImpl deviceCtrl =  DeviceCtrlImpl.getInstance();
 
     protected JSONObject processRequest(JSONObject jsonReq)
             throws ServletException, IOException {

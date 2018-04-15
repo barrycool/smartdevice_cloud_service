@@ -8,6 +8,10 @@ import java.util.Map;
  */
 public class ConstKey {
     //rediskey前缀:用户设备开关状态的
+    public static final String redis_key_prefix_user_device_connect_status = "user_device_connnect_status:";
+    public static final int user_device_connect_status_over_time = 0;
+
+
     public static final String redis_key_prefix_user_device_status = "user_device_status:";
     public static final int user_device_status_over_time = 3600;
 

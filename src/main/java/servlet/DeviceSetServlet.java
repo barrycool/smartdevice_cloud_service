@@ -21,7 +21,7 @@ import java.io.*;
 public class DeviceSetServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DeviceSetServlet.class);
 
-    private DeviceCtrlImpl deviceCtrl = new DeviceCtrlImpl();
+    private DeviceCtrlImpl deviceCtrl =  DeviceCtrlImpl.getInstance();
 
     protected JSONObject processRequest(JSONObject jsonReq)
             throws ServletException, IOException {

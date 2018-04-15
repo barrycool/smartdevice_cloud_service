@@ -38,6 +38,18 @@ public class RedisUtil {
         return ConstKey.redis_key_prefix_user_device_status + deviceId + ":";
     }
 
+    public static String getRedisKey_DevConnectStatus(JSONObject jsonReq){
+//        String userId = getUserId(jsonReq);
+        String deviceId = jsonReq.getString(ConstKey.deviceId);
+//        if(userId==null || deviceId==null || userId.length()==0 || deviceId.length()==0){
+//            return null;
+//        }
+        if(StringUtil.isEmpty(deviceId)){
+            return null;
+        }
+        return ConstKey.redis_key_prefix_user_device_connect_status + deviceId + ":";
+    }
+
     public static String getRedisKey_UserToken(JSONObject jsonReq){
         String token = jsonReq.getString(ConstKey.token);
         if(StringUtil.isEmpty(token)){

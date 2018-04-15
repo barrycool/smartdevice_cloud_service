@@ -56,6 +56,11 @@
             <artifactId>jetty-http</artifactId>
             <version>9.4.4.v20170414</version>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-continuation</artifactId>
+            <version>9.4.4.v20170414</version>
+        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -108,6 +113,11 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-1.2-api</artifactId>
             <version>2.8.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.websocket</groupId>
+            <artifactId>websocket-server</artifactId>
+            <version>9.2.23.v20171218</version>
         </dependency>
 
     </dependencies>

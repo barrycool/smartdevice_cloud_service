@@ -2,27 +2,35 @@ package servlet;
 
 import com.alibaba.fastjson.JSONObject;
 import log.SaveTraceLog;
+import org.eclipse.jetty.continuation.Continuation;
+import org.eclipse.jetty.continuation.ContinuationSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import servlet.impl.DeviceCtrlImpl;
-import servlet.impl.UserCtrlImpl;
+import servlet.impl.MyAsyncHandler;
 import util.ConstKey;
 import util.PrintUtil;
-import util.StringUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Created by yuanyuanfan on 2018/1/23.
+ * Created by fanyuanyuan on 2018/4/7.
  */
-public class DeviceGetServlet extends HttpServlet {
-    private static final Logger logger = LoggerFactory.getLogger(DeviceGetServlet.class);
+public class ContinuationServlet extends HttpServlet {
+    private static final Logger logger = LoggerFactory.getLogger(ContinuationServlet.class);
 
     private DeviceCtrlImpl deviceCtrl =  DeviceCtrlImpl.getInstance();
+
+
+
+    private static final long serialVersionUID = 6112996063962978130L;
+
 
     protected JSONObject processRequest(JSONObject jsonReq){
 
@@ -44,33 +52,35 @@ public class DeviceGetServlet extends HttpServlet {
 
 
     private void post(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        long start = System.currentTimeMillis();
 
         response.setContentType("text/html;charset=UTF-8");
         JSONObject jsonReq = QueryPack.postQueryPack(request);
 
-        JSONObject queryResult = processRequest(jsonReq);
-        PrintUtil.print(queryResult, response);
+        Continuation continuation = ContinuationSupport.getContinuation(request);
+        continuation.setTimeout(0);
 
-        long end = System.currentTimeMillis();
-
-        SaveTraceLog.saveTraceLog(request.getRemoteAddr(), end - start, request.getRequestURL().toString());
-
+        String deviceId = jsonReq.getString(ConstKey.deviceId);
+        if (continuation.isInitial()) {
+            processRequest(jsonReq);
+            continuation.suspend();
+            MyAsyncHandler myAsyncHandler = new MyAsyncHandler(continuation, response);
+            deviceCtrl.addAsynHandler(deviceId, myAsyncHandler);
+        }
     }
 
     private void get(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        long start = System.currentTimeMillis();
-
         response.setContentType("text/html;charset=UTF-8");
         JSONObject jsonReq = QueryPack.queryPack(request);
 
-        JSONObject queryResult = processRequest(jsonReq);
-        PrintUtil.print(queryResult, response);
-
-        long end = System.currentTimeMillis();
-
-        SaveTraceLog.saveTraceLog(request.getRemoteAddr(), end - start, request.getRequestURL().toString());
-
+        Continuation continuation = ContinuationSupport.getContinuation(request);
+        continuation.setTimeout(0);
+        String deviceId = jsonReq.getString(ConstKey.deviceId);
+        if (continuation.isInitial()) {
+            processRequest(jsonReq);
+            continuation.suspend();
+            MyAsyncHandler myAsyncHandler = new MyAsyncHandler(continuation, response);
+            deviceCtrl.addAsynHandler(deviceId, myAsyncHandler);
+        }
     }
 
 
@@ -84,5 +94,4 @@ public class DeviceGetServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         post(request, response);
     }
-
 }

@@ -24,14 +24,34 @@ public class DeviceCtrlImpl {
 
     private DeviceFactory deviceFactory = DeviceFactory.getInstance();
 
+    private Map<String, MyAsyncHandler> mapHandler = new HashMap<>();
+
+
     private static JSONObject deviceOpenStatus = new JSONObject();
     private static JSONObject deviceClosedStatus = new JSONObject();
+
+
+    private static DeviceCtrlImpl deviceCtrl = new DeviceCtrlImpl();
+
+    public static DeviceCtrlImpl getInstance(){
+        return deviceCtrl;
+    }
+
+    private DeviceCtrlImpl(){}
+
     static{
         deviceOpenStatus.put("status", "ON");
         deviceClosedStatus.put("status", "OFF");
     }
 
 
+    public void addAsynHandler(String deviceId, MyAsyncHandler myAsyncHandler){
+        mapHandler.put(deviceId, myAsyncHandler);
+    }
+
+    public MyAsyncHandler getHandluer(String deviceId){
+        return mapHandler.get(deviceId);
+    }
 
     public static Map<String, String> mapCtrl = new HashMap<String, String>();
 
@@ -54,13 +74,40 @@ public class DeviceCtrlImpl {
         return new JSONObject();
     }
 
+    public boolean getDevConnectStatus(JSONObject jsonReq){
+        String redisKey = RedisUtil.getRedisKey_DevConnectStatus(jsonReq);
+        String redisValue = RedisTools.get(redisKey);
+        if(StringUtil.isEmpty(redisValue) || "0".equals(redisValue)){
+            return false;
+        }
+        return true;
+    }
+
+    public boolean setDevConnectStatus(JSONObject jsonReq){
+        String redisKey = RedisUtil.getRedisKey_DevConnectStatus(jsonReq);
+        String redisValue = RedisTools.get(redisKey);
+        if(StringUtil.isEmpty(redisValue) || "0".equals(redisValue)){
+            return false;
+        }
+        String status = RedisTools.set(redisKey, redisValue, ConstKey.user_device_connect_status_over_time);
+        if(!"OK".equals(status)){
+            return false;
+        }
+        return true;
+    }
+
     public JSONObject setDevStatus(JSONObject jsonReq){
-        String name = jsonReq.getString(ConstKey.name);
-        String ctrlValue = convertCtrlName(name);
+//        String name = jsonReq.getString(ConstKey.name);
+//        String ctrlValue = convertCtrlName(name);
+
+        String deviceId = jsonReq.getString(ConstKey.deviceId);
+        MyAsyncHandler myAsyncHandler = getHandluer(deviceId);
+        myAsyncHandler.onEvent(jsonReq);
+
+        String ctrlValue = jsonReq.getString(ConstKey.name);
         String healthValue = "OK";
         String redisKey = RedisUtil.getRedisKey_DevStatus(jsonReq);
         String status = RedisTools.set(redisKey, ctrlValue, ConstKey.user_device_status_over_time);
-        logger.error("setStatus, device_id={}, status={}", redisKey, status);
         JSONObject jsonCtrl = new JSONObject();
         jsonCtrl.put(ConstKey.name, "powerState");
         jsonCtrl.put(ConstKey.value, ctrlValue);

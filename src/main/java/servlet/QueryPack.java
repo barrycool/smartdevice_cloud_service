@@ -99,6 +99,7 @@ public class QueryPack {
 
             return jsonReq;
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error("request failed, error={}", e);
             return null;
         }
