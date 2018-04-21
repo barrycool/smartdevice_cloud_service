@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,10 +52,16 @@ public class ContinuationServlet extends HttpServlet {
     }
 
 
+    private static int connect_cnt = 0;
+
     private void post(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         response.setContentType("text/html;charset=UTF-8");
         JSONObject jsonReq = QueryPack.postQueryPack(request);
+
+        logger.error("connect_cnt={}, request={}", connect_cnt, jsonReq);
+
+        connect_cnt++;
 
         Continuation continuation = ContinuationSupport.getContinuation(request);
         continuation.setTimeout(0);
@@ -65,6 +72,13 @@ public class ContinuationServlet extends HttpServlet {
             continuation.suspend();
             MyAsyncHandler myAsyncHandler = new MyAsyncHandler(continuation, request, response);
             deviceCtrl.addAsynHandler(deviceId, myAsyncHandler);
+        }
+        try {
+            PrintWriter printWriter = response.getWriter();
+            printWriter.println("connect ok...");
+            printWriter.flush();
+        }catch (Exception e){
+            logger.error("print failed, ERROR:{}", e);
         }
     }
 

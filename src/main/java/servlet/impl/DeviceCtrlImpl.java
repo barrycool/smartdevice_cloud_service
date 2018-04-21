@@ -102,8 +102,7 @@ public class DeviceCtrlImpl {
 
         String deviceId = jsonReq.getString(ConstKey.deviceId);
         MyAsyncHandler myAsyncHandler = getHandluer(deviceId);
-        JSONObject jsonResp = myAsyncHandler.onEvent(jsonReq);
-        logger.error("client resp={}", jsonResp);
+        myAsyncHandler.onSetEvent(jsonReq);
 
         String ctrlValue = jsonReq.getString(ConstKey.name);
         String healthValue = "OK";

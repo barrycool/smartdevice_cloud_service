@@ -28,9 +28,8 @@ public class MyAsyncHandler implements Serializable{
         this.request = request;
     }
 
-    public JSONObject onEvent(JSONObject jsonReq) {
+    public void onSetEvent(JSONObject jsonReq) {
 
-        JSONObject jsonObject = null;
         PrintWriter printWriter = null;
         try {
             printWriter = response.getWriter();
@@ -39,12 +38,5 @@ public class MyAsyncHandler implements Serializable{
         }
         printWriter.println(jsonReq.toJSONString());
         printWriter.flush();
-
-        try {
-            jsonObject = QueryPack.postQueryPack(request);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return jsonObject;
     }
 }
