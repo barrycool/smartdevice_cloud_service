@@ -102,8 +102,8 @@ public class DeviceCtrlImpl {
 
         String deviceId = jsonReq.getString(ConstKey.deviceId);
         MyAsyncHandler myAsyncHandler = getHandluer(deviceId);
-        myAsyncHandler.onSetEvent(jsonReq);
-
+        JSONObject jsonObject = myAsyncHandler.onSetEvent(jsonReq);
+        logger.error("client resp={}", jsonObject);
         String ctrlValue = jsonReq.getString(ConstKey.name);
         String healthValue = "OK";
         String redisKey = RedisUtil.getRedisKey_DevStatus(jsonReq);
