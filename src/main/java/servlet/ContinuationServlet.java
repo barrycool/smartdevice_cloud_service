@@ -52,16 +52,10 @@ public class ContinuationServlet extends HttpServlet {
     }
 
 
-    private static int connect_cnt = 0;
-
     private void post(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         response.setContentType("text/html;charset=UTF-8");
         JSONObject jsonReq = QueryPack.postQueryPack(request);
-
-        logger.error("connect_cnt={}, request={}", connect_cnt, jsonReq);
-
-        connect_cnt++;
 
         Continuation continuation = ContinuationSupport.getContinuation(request);
         continuation.setTimeout(0);

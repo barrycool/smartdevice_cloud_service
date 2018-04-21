@@ -77,12 +77,15 @@ public class QueryPack {
             throws ServletException, IOException {
         try {
             String ctx = toString(request);
+            logger.error("ctx={}", ctx);
             if(StringUtil.isEmpty(ctx)){
+                logger.error("ctx is null, request={}", request);
                 return null;
             }
             JSONObject jsonReq = JSON.parseObject(ctx);
             return jsonReq;
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error("request failed, ERROR={}", e);
             return null;
         }
