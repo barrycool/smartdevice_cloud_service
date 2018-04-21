@@ -57,6 +57,8 @@ public class ContinuationServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         JSONObject jsonReq = QueryPack.postQueryPack(request);
 
+        System.out.println("jsonReq=" + jsonReq.toString());
+
         Continuation continuation = ContinuationSupport.getContinuation(request);
         continuation.setTimeout(0);
 
@@ -64,9 +66,10 @@ public class ContinuationServlet extends HttpServlet {
         if (continuation.isInitial()) {
             processRequest(jsonReq);
             continuation.suspend();
-            MyAsyncHandler myAsyncHandler = new MyAsyncHandler(continuation, request, response);
-            deviceCtrl.addAsynHandler(deviceId, myAsyncHandler);
         }
+
+        MyAsyncHandler myAsyncHandler = new MyAsyncHandler(continuation, request, response);
+        deviceCtrl.addAsynHandler(deviceId, myAsyncHandler);
         try {
             PrintWriter printWriter = response.getWriter();
             printWriter.println("connect ok...");

@@ -32,9 +32,17 @@ public class PostRequest {
                 in = new BufferedReader(
                         new InputStreamReader(conn.getInputStream()));
                 String line = in.readLine();
-                System.out.println(line);
-                byte[] q = params.toString().getBytes();
-                out.write(q);
+                System.out.println("1:" + line);
+                out.flush();
+                System.out.println("2:" + line);
+                out.write(p);
+                System.out.println("3:" + line);
+
+                in = new BufferedReader(
+                        new InputStreamReader(conn.getInputStream()));
+                System.out.println("4:" + line);
+                line = in.readLine();
+                System.out.println("5:" + line);
             }
 
         }catch (Exception e){

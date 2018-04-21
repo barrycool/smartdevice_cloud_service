@@ -8,7 +8,6 @@ import servlet.QueryPack;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 
@@ -31,13 +30,31 @@ public class MyAsyncHandler implements Serializable{
         this.request = request;
     }
 
-    public JSONObject onSetEvent(JSONObject jsonReq) {
+    public JSONObject onEvent(JSONObject jsonReq) {
+        try {
+            send(jsonReq);
+            return recv();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public void send(JSONObject jsonReq) {
         PrintWriter printWriter = null;
         try {
             printWriter = response.getWriter();
             printWriter.println(jsonReq.toJSONString());
             printWriter.flush();
-            JSONObject jsonResult = QueryPack.postQueryPack(request);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public JSONObject recv() {
+        try {
+            JSONObject jsonResult = QueryPack.postQueryPack(this.request);
             logger.error("return:{}" , jsonResult);
             System.out.println("return: " + jsonResult.toString());
             return jsonResult;
@@ -45,6 +62,5 @@ public class MyAsyncHandler implements Serializable{
             e.printStackTrace();
         }
         return null;
-
     }
 }
