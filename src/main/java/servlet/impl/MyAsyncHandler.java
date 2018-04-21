@@ -2,28 +2,35 @@ package servlet.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import org.eclipse.jetty.continuation.Continuation;
-import util.PrintUtil;
+import servlet.QueryPack;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 
 /**
  * Created by fanyuanyuan on 2018/4/15.
  */
-public class MyAsyncHandler {
+public class MyAsyncHandler implements Serializable{
+
+    private static final long serialVersionUID = -7890663945232864573L;
 
     private Continuation continuation;
 
     private HttpServletResponse response;
+    private HttpServletRequest request;
 
-    public MyAsyncHandler(Continuation ctu, HttpServletResponse response){
+    public MyAsyncHandler(Continuation ctu, HttpServletRequest request, HttpServletResponse response){
         this.continuation = ctu;
         this.response = response;
+        this.request = request;
     }
 
-    public void onEvent(JSONObject jsonReq) {
+    public JSONObject onEvent(JSONObject jsonReq) {
 
+        JSONObject jsonObject = null;
         PrintWriter printWriter = null;
         try {
             printWriter = response.getWriter();
@@ -32,5 +39,12 @@ public class MyAsyncHandler {
         }
         printWriter.println(jsonReq.toJSONString());
         printWriter.flush();
+
+        try {
+            jsonObject = QueryPack.postQueryPack(request);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
     }
 }

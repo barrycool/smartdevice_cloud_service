@@ -63,7 +63,7 @@ public class ContinuationServlet extends HttpServlet {
         if (continuation.isInitial()) {
             processRequest(jsonReq);
             continuation.suspend();
-            MyAsyncHandler myAsyncHandler = new MyAsyncHandler(continuation, response);
+            MyAsyncHandler myAsyncHandler = new MyAsyncHandler(continuation, request, response);
             deviceCtrl.addAsynHandler(deviceId, myAsyncHandler);
         }
     }
@@ -78,7 +78,7 @@ public class ContinuationServlet extends HttpServlet {
         if (continuation.isInitial()) {
             processRequest(jsonReq);
             continuation.suspend();
-            MyAsyncHandler myAsyncHandler = new MyAsyncHandler(continuation, response);
+            MyAsyncHandler myAsyncHandler = new MyAsyncHandler(continuation, request,  response);
             deviceCtrl.addAsynHandler(deviceId, myAsyncHandler);
         }
     }
