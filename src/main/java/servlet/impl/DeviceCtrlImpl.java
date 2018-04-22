@@ -24,7 +24,7 @@ public class DeviceCtrlImpl {
 
     private DeviceFactory deviceFactory = DeviceFactory.getInstance();
 
-    private Map<String, MyAsyncHandler> mapHandler = new HashMap<>();
+//    private Map<String, MyAsyncHandler> mapHandler = new HashMap<>();
 
 
     private static JSONObject deviceOpenStatus = new JSONObject();
@@ -45,13 +45,13 @@ public class DeviceCtrlImpl {
     }
 
 
-    public void addAsynHandler(String deviceId, MyAsyncHandler myAsyncHandler){
-        mapHandler.put(deviceId, myAsyncHandler);
-    }
-
-    public MyAsyncHandler getHandluer(String deviceId){
-        return mapHandler.get(deviceId);
-    }
+//    public void addAsynHandler(String deviceId, MyAsyncHandler myAsyncHandler){
+//        mapHandler.put(deviceId, myAsyncHandler);
+//    }
+//
+//    public MyAsyncHandler getHandluer(String deviceId){
+//        return mapHandler.get(deviceId);
+//    }
 
     public static Map<String, String> mapCtrl = new HashMap<String, String>();
 
@@ -101,9 +101,9 @@ public class DeviceCtrlImpl {
 //        String ctrlValue = convertCtrlName(name);
 
         String deviceId = jsonReq.getString(ConstKey.deviceId);
-        MyAsyncHandler myAsyncHandler = getHandluer(deviceId);
-        JSONObject jsonObject = myAsyncHandler.onEvent(jsonReq);
-        logger.error("client resp={}", jsonObject);
+//        MyAsyncHandler myAsyncHandler = getHandluer(deviceId);
+//        JSONObject jsonObject = myAsyncHandler.onEvent(jsonReq);
+//        logger.error("client resp={}", jsonObject);
         String ctrlValue = jsonReq.getString(ConstKey.name);
         String healthValue = "OK";
         String redisKey = RedisUtil.getRedisKey_DevStatus(jsonReq);

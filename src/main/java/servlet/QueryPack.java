@@ -75,20 +75,32 @@ public class QueryPack {
 
     public static JSONObject postQueryPack(HttpServletRequest request)
             throws ServletException, IOException {
+        JSONObject jsonReq = new JSONObject();
         try {
             String ctx = toString(request);
-            logger.error("ctx={}", ctx);
             if(StringUtil.isEmpty(ctx)){
-                logger.error("ctx is null, request={}", request);
-                return null;
+                return jsonReq;
             }
-            JSONObject jsonReq = JSON.parseObject(ctx);
-            return jsonReq;
+            jsonReq = JSON.parseObject(ctx);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("request failed, ERROR={}", e);
-            return null;
         }
+        return jsonReq;
+    }
+
+    public static JSONObject postQueryPack(String in){
+        JSONObject jsonReq = new JSONObject();
+        try {
+            if(StringUtil.isEmpty(in)){
+                return jsonReq;
+            }
+            jsonReq = JSON.parseObject(in);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("request failed, ERROR={}", e);
+        }
+        return jsonReq;
     }
 
     public static JSONObject queryPack(HttpServletRequest request)
