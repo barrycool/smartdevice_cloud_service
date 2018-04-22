@@ -2,12 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8ae86dee-f128-4260-b26a-b2c242b8a2db" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/servlet/DeviceSetServlet.java" afterPath="$PROJECT_DIR$/src/main/java/servlet/DeviceSetServlet.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/servlet/impl/DeviceCtrlImpl.java" afterPath="$PROJECT_DIR$/src/main/java/servlet/impl/DeviceCtrlImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/servlet/test/MyTcpHandler.java" afterPath="$PROJECT_DIR$/src/main/java/servlet/test/MyTcpHandler.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/servlet/test/TcpClient.java" afterPath="$PROJECT_DIR$/src/main/java/servlet/test/TcpClient.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/servlet/test/TcpServer.java" afterPath="$PROJECT_DIR$/src/main/java/servlet/test/TcpServer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -36,18 +32,18 @@
       <file leaf-file-name="TcpClient.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/servlet/test/TcpClient.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="384">
-              <caret line="34" column="9" lean-forward="true" selection-start-line="34" selection-start-column="9" selection-end-line="34" selection-end-column="9" />
+            <state relative-caret-position="234">
+              <caret line="24" column="20" lean-forward="false" selection-start-line="24" selection-start-column="20" selection-end-line="24" selection-end-column="20" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TcpServer.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="TcpServer.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/servlet/test/TcpServer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="19" column="22" lean-forward="false" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="22" />
+            <state relative-caret-position="158">
+              <caret line="62" column="28" lean-forward="false" selection-start-line="62" selection-start-column="28" selection-end-line="62" selection-end-column="28" />
               <folding>
                 <element signature="e#470#492#0" expanded="true" />
               </folding>
@@ -55,11 +51,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MyTcpHandler.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="MyTcpHandler.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/servlet/test/MyTcpHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="309">
-              <caret line="66" column="0" lean-forward="true" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
+            <state relative-caret-position="279">
+              <caret line="64" column="20" lean-forward="false" selection-start-line="64" selection-start-column="20" selection-end-line="64" selection-end-column="20" />
               <folding />
             </state>
           </provider>
@@ -179,11 +175,11 @@
         <option value="$PROJECT_DIR$/src/main/java/servlet/websocket/MyAdvancedEchoCreator.java" />
         <option value="$PROJECT_DIR$/src/main/java/servlet/test/WsClient.java" />
         <option value="$PROJECT_DIR$/src/main/java/servlet/DeviceSetServlet.java" />
-        <option value="$PROJECT_DIR$/src/main/java/servlet/test/TcpClient.java" />
-        <option value="$PROJECT_DIR$/src/main/java/servlet/test/TcpServer.java" />
         <option value="$PROJECT_DIR$/src/main/java/servlet/impl/DeviceCtrlImpl.java" />
         <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" />
         <option value="$PROJECT_DIR$/src/main/java/servlet/test/MyTcpHandler.java" />
+        <option value="$PROJECT_DIR$/src/main/java/servlet/test/TcpClient.java" />
+        <option value="$PROJECT_DIR$/src/main/java/servlet/test/TcpServer.java" />
       </list>
     </option>
   </component>
@@ -586,7 +582,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.TcpClient">
+  <component name="RunManager" selected="Jetty Server.server">
     <configuration default="false" name="RedisTools" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
@@ -2558,12 +2554,12 @@
       <workItem from="1523318928692" duration="410000" />
       <workItem from="1523668846961" duration="5678000" />
       <workItem from="1523752276726" duration="13896000" />
-      <workItem from="1524270298741" duration="39106000" />
+      <workItem from="1524270298741" duration="39538000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="105440000" />
+    <option name="totallyTimeSpent" value="105872000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="877" extended-state="6" />
@@ -2984,16 +2980,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/servlet/test/TcpServer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="19" column="22" lean-forward="false" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="22" />
-          <folding>
-            <element signature="e#470#492#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/servlet/impl/DeviceCtrlImpl.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
@@ -3018,19 +3004,29 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/servlet/test/TcpClient.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/servlet/test/MyTcpHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="384">
-          <caret line="34" column="9" lean-forward="true" selection-start-line="34" selection-start-column="9" selection-end-line="34" selection-end-column="9" />
+        <state relative-caret-position="279">
+          <caret line="64" column="20" lean-forward="false" selection-start-line="64" selection-start-column="20" selection-end-line="64" selection-end-column="20" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/servlet/test/MyTcpHandler.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/servlet/test/TcpClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="309">
-          <caret line="66" column="0" lean-forward="true" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
+        <state relative-caret-position="234">
+          <caret line="24" column="20" lean-forward="false" selection-start-line="24" selection-start-column="20" selection-end-line="24" selection-end-column="20" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/servlet/test/TcpServer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="158">
+          <caret line="62" column="28" lean-forward="false" selection-start-line="62" selection-start-column="28" selection-end-line="62" selection-end-column="28" />
+          <folding>
+            <element signature="e#470#492#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

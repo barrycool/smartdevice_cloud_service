@@ -59,6 +59,9 @@ public class TcpServer {
         try {
             String deviceId = jsonReq.getString(ConstKey.deviceId);
             MyTcpHandler myTcpHandler = mapTcpHandler.get(deviceId);
+            if(myTcpHandler==null){
+                return null;
+            }
             send(myTcpHandler, jsonReq);
             return myTcpHandler.recv();
         } catch (Exception e) {

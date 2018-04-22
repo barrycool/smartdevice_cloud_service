@@ -16,7 +16,7 @@ public class TcpClient {
         OutputStream out = socket.getOutputStream();
 
         JSONObject jsob = new JSONObject();
-        jsob.put("deviceId", "12323");
+        jsob.put("deviceId", "123231");
         jsob.put("name_space'", "Alexa");
         jsob.put("name", "ReportState");
         jsob.put("token", "2222");
