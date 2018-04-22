@@ -296,20 +296,37 @@ public class UserCtrlImpl {
         return redisValue + "," + info;
     }
 
-    public JSONObject addDevice(JSONObject jsonReq) {
-        String userId = jsonReq.getString(ConstKey.userId);
-        String redisKey = RedisUtil.getRedisKey_DevList(userId);
-
+    public void setDeviceList(String key, JSONObject jsonReq){
+        String userKey = jsonReq.getString(key);
+        String redisKey = RedisUtil.getRedisKey_DevList(userKey);
         if (redisKey == null || redisKey.length() == 0) {
-            return null;
+            return ;
         }
-
         String redisValue = RedisUtil.getRedisValue(redisKey);
         String v = addDevice(redisValue, jsonReq);
 
         if (!StringUtil.isEmpty(v)) {
             RedisTools.set(redisKey, v, ConstKey.user_device_list_over_time);
         }
+    }
+
+    public JSONObject addDevice(JSONObject jsonReq) {
+//        String userId = jsonReq.getString(ConstKey.userId);
+//        String redisKey = RedisUtil.getRedisKey_DevList(userId);
+//
+//        if (redisKey == null || redisKey.length() == 0) {
+//            return null;
+//        }
+//
+//        String redisValue = RedisUtil.getRedisValue(redisKey);
+//        String v = addDevice(redisValue, jsonReq);
+//
+//        if (!StringUtil.isEmpty(v)) {
+//            RedisTools.set(redisKey, v, ConstKey.user_device_list_over_time);
+//        }
+
+        setDeviceList(ConstKey.token, jsonReq);
+        setDeviceList(ConstKey.userId, jsonReq);
 
         JSONObject queryResult = new JSONObject();
         queryResult.put(ConstKey.nameSpace, "DeviceManagement");
