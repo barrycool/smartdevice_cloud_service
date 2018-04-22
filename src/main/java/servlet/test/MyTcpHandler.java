@@ -15,10 +15,10 @@ public class MyTcpHandler extends Thread{
     private BufferedReader bufferedReader;
     private OutputStream outputStream;
 
-    public MyTcpHandler(Socket socket) throws Exception{
+    public MyTcpHandler(Socket socket, BufferedReader bufferedReader) throws Exception{
         this.socket = socket;
-        outputStream = socket.getOutputStream();
-        bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        this.outputStream = socket.getOutputStream();
+        this.bufferedReader = bufferedReader;
     }
 
     public JSONObject onEvent(JSONObject jsonReq) {
@@ -53,11 +53,11 @@ public class MyTcpHandler extends Thread{
 
     public JSONObject recv() {
         try {
+//            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             char[] buf = new char[2048];
             int len = bufferedReader.read(buf);
             String data = new String(buf, 0, len);
             JSONObject jsonResult = QueryPack.postQueryPack(data);
-            System.out.println("jsonResult: " + jsonResult.toString());
             return jsonResult;
         } catch (Exception e) {
             e.printStackTrace();

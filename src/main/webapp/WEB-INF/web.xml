@@ -27,6 +27,8 @@
     <servlet>
         <servlet-name>set</servlet-name>
         <servlet-class>servlet.DeviceSetServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
     </servlet>
     <servlet>
         <servlet-name>get</servlet-name>
@@ -42,6 +44,7 @@
         <load-on-startup>1</load-on-startup>
         <async-supported>true</async-supported>
     </servlet>
+
 
 
     <servlet-mapping>

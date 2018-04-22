@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSONObject;
 import device.DeviceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import servlet.test.TcpServer;
 import util.ConstKey;
 import util.RedisUtil;
 import util.StringUtil;
@@ -25,6 +26,8 @@ public class DeviceCtrlImpl {
     private DeviceFactory deviceFactory = DeviceFactory.getInstance();
 
 //    private Map<String, MyAsyncHandler> mapHandler = new HashMap<>();
+
+    private TcpServer tcpServer =  TcpServer.getTcpServer();
 
 
     private static JSONObject deviceOpenStatus = new JSONObject();
@@ -100,30 +103,37 @@ public class DeviceCtrlImpl {
 //        String name = jsonReq.getString(ConstKey.name);
 //        String ctrlValue = convertCtrlName(name);
 
-        String deviceId = jsonReq.getString(ConstKey.deviceId);
+//        String deviceId = jsonReq.getString(ConstKey.deviceId);
 //        MyAsyncHandler myAsyncHandler = getHandluer(deviceId);
 //        JSONObject jsonObject = myAsyncHandler.onEvent(jsonReq);
 //        logger.error("client resp={}", jsonObject);
-        String ctrlValue = jsonReq.getString(ConstKey.name);
-        String healthValue = "OK";
-        String redisKey = RedisUtil.getRedisKey_DevStatus(jsonReq);
-        String status = RedisTools.set(redisKey, ctrlValue, ConstKey.user_device_status_over_time);
-        JSONObject jsonCtrl = new JSONObject();
-        jsonCtrl.put(ConstKey.name, "powerState");
-        jsonCtrl.put(ConstKey.value, ctrlValue);
-        jsonCtrl.put(ConstKey.nameSpace, "Alexa.PowerController");
 
-        JSONObject jsonHealth = new JSONObject();
-        jsonHealth.put(ConstKey.name, "connectivity");
-        if(!"OK".equals(status)){
-            jsonCtrl.put(ConstKey.value, "OFF");
+        String healthValue = "OK";
+        JSONObject jsonResponse = tcpServer.onEvent(jsonReq);
+        if(jsonResponse==null || jsonResponse.size()==0){
             healthValue = "UNREACHABLE";
         }
+        JSONObject jsonHealth = new JSONObject();
+        jsonHealth.put(ConstKey.name, "connectivity");
+
+//        String ctrlValue = jsonReq.getString(ConstKey.name);
+//        String healthValue = "OK";
+//        String redisKey = RedisUtil.getRedisKey_DevStatus(jsonReq);
+//        String status = RedisTools.set(redisKey, ctrlValue, ConstKey.user_device_status_over_time);
+//        JSONObject jsonCtrl = new JSONObject();
+//        jsonCtrl.put(ConstKey.name, "powerState");
+//        jsonCtrl.put(ConstKey.value, ctrlValue);
+//        jsonCtrl.put(ConstKey.nameSpace, "Alexa.PowerController");
+
+//        if(!"OK".equals(status)){
+//            jsonCtrl.put(ConstKey.value, "OFF");
+//            healthValue = "UNREACHABLE";
+//        }
         jsonHealth.put(ConstKey.value, healthValue);
         jsonHealth.put(ConstKey.nameSpace, "Alexa.EndpointHealth");
 
         JSONArray jsonProperties = new JSONArray();
-        jsonProperties.add(jsonCtrl);
+        jsonProperties.add(jsonResponse);
         jsonProperties.add(jsonHealth);
 
         JSONObject jsonResult = new JSONObject();
