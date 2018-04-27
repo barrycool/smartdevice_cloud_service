@@ -279,12 +279,10 @@ public class UserCtrlImpl {
         String deviceType = jsonReq.getString(ConstKey.deviceType);
         String friendlyName = jsonReq.getString(ConstKey.friendlyName);
         String manufacturerName = jsonReq.getString(ConstKey.manufactureName);
-
-        if (StringUtil.isEmpty(deviceId) || StringUtil.isEmpty(deviceType) ||
-                StringUtil.isEmpty(friendlyName) || StringUtil.isEmpty(manufacturerName)) {
-            return redisValue;
-        }
-
+//        if (StringUtil.isEmpty(deviceId) || StringUtil.isEmpty(deviceType) ||
+//                StringUtil.isEmpty(friendlyName) || StringUtil.isEmpty(manufacturerName)) {
+//            return redisValue;
+//        }
         String info = deviceId + ":" + deviceType + ":" + friendlyName + ":" + manufacturerName;
         if(StringUtil.isEmpty(redisValue)){
             return info;
@@ -299,8 +297,8 @@ public class UserCtrlImpl {
     public void setDeviceList(String key, JSONObject jsonReq){
         String userKey = jsonReq.getString(key);
         String redisKey = RedisUtil.getRedisKey_DevList(userKey);
-        if (redisKey == null || redisKey.length() == 0) {
-            return ;
+        if (StringUtil.isEmpty(redisKey)) {
+            return;
         }
         String redisValue = RedisUtil.getRedisValue(redisKey);
         String v = addDevice(redisValue, jsonReq);
@@ -345,7 +343,12 @@ public class UserCtrlImpl {
         jsonResult.put(ConstKey.name, "Discover.Response");
         jsonResult.put(ConstKey.nameSpace, "Alexa.Discovery");
 
-        String redisKey = RedisUtil.getRedisKey_DevList(jsonReq);
+        String userId = jsonReq.getString(ConstKey.userId);
+        String token = jsonReq.getString(ConstKey.token);
+        String redisKey = RedisUtil.getRedisKey_DevList(userId);
+        if(StringUtil.isEmpty(redisKey)){
+            redisKey = RedisUtil.getRedisKey_DevList(token);
+        }
         String redisValue = RedisUtil.getRedisValue(redisKey);
         if (StringUtil.isEmpty(redisValue)) {
             jsonResult.put(ConstKey.devices, "none");

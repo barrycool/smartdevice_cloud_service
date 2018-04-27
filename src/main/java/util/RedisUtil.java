@@ -24,8 +24,9 @@ public class RedisUtil {
     public static String getUserId(JSONObject jsonReq){
         String userId = jsonReq.getString(ConstKey.userId);
         if(StringUtil.isEmpty(userId)){
-            String redisKeyUserToken = getRedisKey_UserToken(jsonReq);
-            userId = getRedisValue(redisKeyUserToken);
+//            String redisKeyUserToken = getRedisKey_UserToken(jsonReq);
+//            userId = getRedisValue(redisKeyUserToken);
+            userId = jsonReq.getString(ConstKey.token);
         }
         return userId;
     }
@@ -63,15 +64,18 @@ public class RedisUtil {
     }
 
     public static String getRedisKey_DevList(JSONObject jsonReq){
-        String userId = getUserId(jsonReq);
-        if(StringUtil.isEmpty(userId)){
+        String key = jsonReq.getString(ConstKey.userId);
+        if(StringUtil.isEmpty(key)){
             return null;
         }
-        return ConstKey.redis_key_prefix_user_device_list + userId + ":";
+        return ConstKey.redis_key_prefix_user_device_list + key + ":";
     }
 
-    public static String getRedisKey_DevList(String  userId){
-        return ConstKey.redis_key_prefix_user_device_list + userId + ":";
+    public static String getRedisKey_DevList(String  key){
+        if(StringUtil.isEmpty(key)){
+            return null;
+        }
+        return ConstKey.redis_key_prefix_user_device_list + key + ":";
     }
 
     public static String getRedisKey_UserInfo(JSONObject jsonReq){
