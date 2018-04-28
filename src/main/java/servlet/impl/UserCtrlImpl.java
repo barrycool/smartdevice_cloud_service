@@ -234,12 +234,16 @@ public class UserCtrlImpl {
         RedisTools.set(redisKey_userInfo, v, ConstKey.user_id_over_time);
 
         String userPhone = jsonUserInfo.getString(ConstKey.userPhone);
-        String redisKey_userPhoneLogin = RedisUtil.getRedisKey_userLogin(userPhone);
-        RedisTools.set(redisKey_userPhoneLogin, v, ConstKey.user_login_name_over_time);
+        if(!StringUtil.isEmpty(userPhone)){
+            String redisKey_userPhoneLogin = RedisUtil.getRedisKey_userLogin(userPhone);
+            RedisTools.set(redisKey_userPhoneLogin, v, ConstKey.user_login_name_over_time);
 
+        }
         String userMail = jsonUserInfo.getString(ConstKey.userEmail);
-        String redisKey_userMailLogin = RedisUtil.getRedisKey_userLogin(userMail);
-        RedisTools.set(redisKey_userMailLogin, v, ConstKey.user_login_name_over_time);
+        if(!StringUtil.isEmpty(userMail)){
+            String redisKey_userMailLogin = RedisUtil.getRedisKey_userLogin(userMail);
+            RedisTools.set(redisKey_userMailLogin, v, ConstKey.user_login_name_over_time);
+        }
         return true;
     }
 
