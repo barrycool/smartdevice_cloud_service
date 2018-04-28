@@ -63,19 +63,35 @@ public class RedisUtil {
         return ConstKey.redis_key_prefix_user_token +  token;
     }
 
+    public static String getRedisKey_UserIdToken(JSONObject jsonReq){
+        String userId = jsonReq.getString(ConstKey.userId);
+        if(StringUtil.isEmpty(userId)){
+            return null;
+        }
+        return ConstKey.redis_key_prefix_user_id_token +  userId;
+    }
+
+    public static String getRedisKey_UserId(JSONObject jsonReq){
+        String userId = jsonReq.getString(ConstKey.userId);
+        if(StringUtil.isEmpty(userId)){
+            return null;
+        }
+        return ConstKey.redis_key_prefix_user_token +  userId;
+    }
+
     public static String getRedisKey_DevList(JSONObject jsonReq){
         String key = jsonReq.getString(ConstKey.userId);
         if(StringUtil.isEmpty(key)){
             return null;
         }
-        return ConstKey.redis_key_prefix_user_device_list + key + ":";
+        return ConstKey.redis_key_prefix_user_device_list + key;
     }
 
     public static String getRedisKey_DevList(String  key){
         if(StringUtil.isEmpty(key)){
             return null;
         }
-        return ConstKey.redis_key_prefix_user_device_list + key + ":";
+        return ConstKey.redis_key_prefix_user_device_list + key;
     }
 
     public static String getRedisKey_UserInfo(JSONObject jsonReq){
@@ -83,7 +99,7 @@ public class RedisUtil {
         if(StringUtil.isEmpty(userId)){
             return null;
         }
-        return ConstKey.redis_key_prefix_user_id + userId + ":";
+        return ConstKey.redis_key_prefix_user_id + userId ;
     }
 
 
@@ -91,11 +107,11 @@ public class RedisUtil {
         if(StringUtil.isEmpty(mailInfo)){
             return null;
         }
-        return ConstKey.redis_key_prefix_register_code + mailInfo + ":";
+        return ConstKey.redis_key_prefix_register_code + mailInfo;
     }
 
     public static String getRedisKey_userLogin(String login){
-        return ConstKey.redis_key_prefix_user_login_name + login + ":";
+        return ConstKey.redis_key_prefix_user_login_name + login;
     }
 
 

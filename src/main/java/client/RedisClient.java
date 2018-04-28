@@ -337,5 +337,22 @@ public class RedisClient {
 
     }
 
+    /**
+     * 删除指定key
+     *
+     * @param key
+     */
+    public void delKey(String key) {
+        Jedis jd = pool.getResource();
+        try {
+            Long status = jd.del(key);
+        } catch (Exception e) {
+            logger.error("jedis del {} failed: {}", key, e.toString());
+        } finally {
+            jd.close();
+        }
+
+    }
+
 
 }

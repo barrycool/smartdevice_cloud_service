@@ -3,6 +3,7 @@ package client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.ConstKey;
+import util.RedisUtil;
 
 
 import java.io.IOException;
@@ -93,7 +94,13 @@ public class RedisFactory {
 
     public static void main(String[] argc){
         RedisClient redisClient = RedisFactory.getClient(RedisKey.APP);
-        redisClient.put(ConstKey.redis_key_prefix_user_device_status +"123:tv", "1", 3600);
-        System.out.println(redisClient.get(ConstKey.redis_key_prefix_user_device_status +"123:tv"));
+
+        String userId = "4e3a350ef7d0948a9f82a9431cc29e63";
+        String redisKey_userId_devList = RedisUtil.getRedisKey_DevList(userId);
+        redisClient.delKey(redisKey_userId_devList);
+        redisClient.delKey("user_device_list:12321");
+
+//        redisClient.put(ConstKey.redis_key_prefix_user_device_status +"123:tv", "1", 3600);
+//        System.out.println(redisClient.get(ConstKey.redis_key_prefix_user_device_status +"123:tv"));
     }
 }
