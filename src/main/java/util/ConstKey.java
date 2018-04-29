@@ -65,6 +65,10 @@ public class ConstKey {
     public static final String  loginName= "loginName";
 
 
+    public static final String  onLine= "1";
+    public static final String  offLine= "0";
+
+
 
 
 

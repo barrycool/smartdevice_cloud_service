@@ -91,45 +91,42 @@ public class DeviceCtrlImpl {
     }
 
     public JSONObject setDevStatus(JSONObject jsonReq){
-//        String name = jsonReq.getString(ConstKey.name);
-//        String ctrlValue = convertCtrlName(name);
-
-//        String deviceId = jsonReq.getString(ConstKey.deviceId);
-//        MyAsyncHandler myAsyncHandler = getHandluer(deviceId);
-//        JSONObject jsonObject = myAsyncHandler.onEvent(jsonReq);
-//        logger.error("client resp={}", jsonObject);
-
         String healthValue = "OK";
-        JSONObject jsonResponse = tcpServer.onEvent(jsonReq);
-        if(jsonResponse==null || jsonResponse.size()==0){
+        JSONObject jsonResponse = new JSONObject();
+
+        String deviceId = jsonReq.getString(ConstKey.deviceId);
+        String redisKey_connect = RedisUtil.getRedisKey_DevConnectStatus(deviceId);
+
+        String connectStatus = RedisTools.get(redisKey_connect);
+        if(StringUtil.isEmpty(connectStatus) || connectStatus.equals(ConstKey.offLine)){
             healthValue = "UNREACHABLE";
+        }else{
+            jsonResponse = tcpServer.onEvent(jsonReq);
+            if(jsonResponse==null || jsonResponse.size()==0){
+                healthValue = "UNREACHABLE";
+            }
         }
+
         JSONObject jsonHealth = new JSONObject();
         jsonHealth.put(ConstKey.name, "connectivity");
 
         jsonHealth.put(ConstKey.value, healthValue);
         jsonHealth.put(ConstKey.nameSpace, "Alexa.EndpointHealth");
 
-//        JSONArray jsonProperties = new JSONArray();
-//        jsonProperties.add(jsonResponse);
-//        jsonProperties.add(jsonHealth);
 
         JSONObject jsonResult = new JSONObject();
         jsonResult.put(ConstKey.deviceId, jsonReq.getString(ConstKey.deviceId));
         jsonResult.put(ConstKey.nameSpace, "Alexa");
         jsonResult.put(ConstKey.name, "Response");
         jsonResult.fluentPutAll(jsonResponse);
-//        jsonResult.put(ConstKey.properties, jsonProperties);
 
         return jsonResult;
     }
 
     public JSONObject getDevStatus(JSONObject jsonReq){
         JSONObject jsonCtrl = new JSONObject();
-
         String redisKey = RedisUtil.getRedisKey_DevStatus(jsonReq);
         String redisValue = RedisUtil.getRedisValue(redisKey);
-        logger.error("getStatus, device_id={}, status={}", redisKey, redisValue);
         String healthValue = "OK";
         jsonCtrl.put(ConstKey.value, redisValue);
         if(StringUtil.isEmpty(redisValue)){

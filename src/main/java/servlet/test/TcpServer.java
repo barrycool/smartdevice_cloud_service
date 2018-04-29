@@ -38,9 +38,14 @@ public class TcpServer {
         this.start();
     }
 
-    public void setDeviceStatus(String deviceId){
+    public void setDeviceStatus(String deviceId, String cmd){
         String redisKey = RedisUtil.getRedisKey_DevStatus(deviceId);
-        RedisTools.set(redisKey, "ON", ConstKey.user_device_status_over_time);
+        RedisTools.set(redisKey, cmd, ConstKey.user_device_status_over_time);
+    }
+
+    public void setDeviceConnectStatus(String deviceId, String cmd){
+        String redisKey = RedisUtil.getRedisKey_DevConnectStatus(deviceId);
+        RedisTools.set(redisKey, cmd, ConstKey.user_device_connect_status_over_time);
     }
 
     public void accept() {
@@ -55,8 +60,7 @@ public class TcpServer {
                 String deviceId = jsonResult.getString(ConstKey.deviceId);
                 MyTcpHandler myTcpHandler = new MyTcpHandler(socket, bufferedReader);
                 mapTcpHandler.put(deviceId, myTcpHandler);
-
-                setDeviceStatus(deviceId);
+                setDeviceConnectStatus(deviceId, ConstKey.onLine);
             }
 
         } catch (Exception e) {
@@ -72,6 +76,13 @@ public class TcpServer {
                 return null;
             }
             send(myTcpHandler, jsonReq);
+            String cmd = jsonReq.getString(ConstKey.name);
+            if(cmd.equals("TurnOn")){
+                cmd = "ON";
+            }else if(cmd.equals("TurnOff")){
+                cmd = "OFF";
+            }
+            setDeviceStatus(deviceId, cmd);
             return myTcpHandler.recv();
         } catch (Exception e) {
             e.printStackTrace();
