@@ -270,9 +270,6 @@ public class UserCtrlImpl {
 
         RedisTools.set(redisKey_userToken, userId, ConstKey.user_token_over_time);
 
-//        String userToken = jsonReq.getString(ConstKey.token);
-//        String redisKey_userIdToken = RedisUtil.getRedisKey_UserIdToken(jsonReq);
-//        RedisTools.set(redisKey_userIdToken, userToken, ConstKey.user_id_token_over_time);
         jsonResult.put(ConstKey.code, "OK");
         jsonResult.put(ConstKey.msg, "Update successfully");
         queryResult.put(ConstKey.result, jsonResult);

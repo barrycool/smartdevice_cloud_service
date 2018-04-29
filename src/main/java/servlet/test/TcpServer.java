@@ -1,11 +1,13 @@
 package servlet.test;
 
 
+import client.RedisTools;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import servlet.QueryPack;
 import servlet.test.MyTcpHandler;
 import util.ConstKey;
+import util.RedisUtil;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -36,6 +38,11 @@ public class TcpServer {
         this.start();
     }
 
+    public void setDeviceStatus(String deviceId){
+        String redisKey = RedisUtil.getRedisKey_DevStatus(deviceId);
+        RedisTools.set(redisKey, "ON", ConstKey.user_device_status_over_time);
+    }
+
     public void accept() {
         try {
             Socket socket = serverSocket.accept();
@@ -48,6 +55,8 @@ public class TcpServer {
                 String deviceId = jsonResult.getString(ConstKey.deviceId);
                 MyTcpHandler myTcpHandler = new MyTcpHandler(socket, bufferedReader);
                 mapTcpHandler.put(deviceId, myTcpHandler);
+
+                setDeviceStatus(deviceId);
             }
 
         } catch (Exception e) {

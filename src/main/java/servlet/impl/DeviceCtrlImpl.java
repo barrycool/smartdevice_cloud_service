@@ -47,15 +47,6 @@ public class DeviceCtrlImpl {
         deviceClosedStatus.put("status", "OFF");
     }
 
-
-//    public void addAsynHandler(String deviceId, MyAsyncHandler myAsyncHandler){
-//        mapHandler.put(deviceId, myAsyncHandler);
-//    }
-//
-//    public MyAsyncHandler getHandluer(String deviceId){
-//        return mapHandler.get(deviceId);
-//    }
-
     public static Map<String, String> mapCtrl = new HashMap<String, String>();
 
     static {
@@ -116,19 +107,6 @@ public class DeviceCtrlImpl {
         JSONObject jsonHealth = new JSONObject();
         jsonHealth.put(ConstKey.name, "connectivity");
 
-//        String ctrlValue = jsonReq.getString(ConstKey.name);
-//        String healthValue = "OK";
-//        String redisKey = RedisUtil.getRedisKey_DevStatus(jsonReq);
-//        String status = RedisTools.set(redisKey, ctrlValue, ConstKey.user_device_status_over_time);
-//        JSONObject jsonCtrl = new JSONObject();
-//        jsonCtrl.put(ConstKey.name, "powerState");
-//        jsonCtrl.put(ConstKey.value, ctrlValue);
-//        jsonCtrl.put(ConstKey.nameSpace, "Alexa.PowerController");
-
-//        if(!"OK".equals(status)){
-//            jsonCtrl.put(ConstKey.value, "OFF");
-//            healthValue = "UNREACHABLE";
-//        }
         jsonHealth.put(ConstKey.value, healthValue);
         jsonHealth.put(ConstKey.nameSpace, "Alexa.EndpointHealth");
 

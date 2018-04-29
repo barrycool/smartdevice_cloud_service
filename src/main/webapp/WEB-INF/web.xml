@@ -38,14 +38,6 @@
         <servlet-name>user_ctrl</servlet-name>
         <servlet-class>servlet.UserCtrlServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>connect</servlet-name>
-        <servlet-class>servlet.ContinuationServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-        <async-supported>true</async-supported>
-    </servlet>
-
-
 
     <servlet-mapping>
         <servlet-name>ctrl</servlet-name>
@@ -58,10 +50,6 @@
     <servlet-mapping>
         <servlet-name>get</servlet-name>
         <url-pattern>/get</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>connect</servlet-name>
-        <url-pattern>/connect</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>user_ctrl</servlet-name>
