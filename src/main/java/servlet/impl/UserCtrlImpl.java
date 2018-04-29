@@ -268,10 +268,11 @@ public class UserCtrlImpl {
             return queryResult;
         }
 
-        String userToken = jsonReq.getString(ConstKey.token);
-        String redisKey_userIdToken = RedisUtil.getRedisKey_UserIdToken(jsonReq);
         RedisTools.set(redisKey_userToken, userId, ConstKey.user_token_over_time);
-        RedisTools.set(redisKey_userIdToken, userToken, ConstKey.user_id_token_over_time);
+
+//        String userToken = jsonReq.getString(ConstKey.token);
+//        String redisKey_userIdToken = RedisUtil.getRedisKey_UserIdToken(jsonReq);
+//        RedisTools.set(redisKey_userIdToken, userToken, ConstKey.user_id_token_over_time);
         jsonResult.put(ConstKey.code, "OK");
         jsonResult.put(ConstKey.msg, "Update successfully");
         queryResult.put(ConstKey.result, jsonResult);
@@ -355,10 +356,10 @@ public class UserCtrlImpl {
             String redisKey_userId_devList = RedisUtil.getRedisKey_DevList(userId);
             setRedisDeviceList(redisKey_userId_devList, jsonReq);
 
-            String redisKey_userToken = RedisUtil.getRedisKey_UserIdToken(jsonReq);
-            String userToken = RedisTools.get(redisKey_userToken);
-            String redisKey_userToken_devList = RedisUtil.getRedisKey_DevList(userToken);
-            setRedisDeviceList(redisKey_userToken_devList, jsonReq);
+//            String redisKey_userToken = RedisUtil.getRedisKey_UserIdToken(jsonReq);
+//            String userToken = RedisTools.get(redisKey_userToken);
+//            String redisKey_userToken_devList = RedisUtil.getRedisKey_DevList(userToken);
+//            setRedisDeviceList(redisKey_userToken_devList, jsonReq);
         }
 
 
@@ -383,17 +384,19 @@ public class UserCtrlImpl {
         jsonResult.put(ConstKey.nameSpace, "Alexa.Discovery");
 
         String userId = jsonReq.getString(ConstKey.userId);
-        String token = jsonReq.getString(ConstKey.token);
+        if(StringUtil.isEmpty(userId)){
+            userId  = RedisUtil.getUserId(jsonReq);
+        }
         String redisKey = RedisUtil.getRedisKey_DevList(userId);
         if (StringUtil.isEmpty(redisKey)) {
-            redisKey = RedisUtil.getRedisKey_DevList(token);
+            jsonResult.put(ConstKey.devices, "none");
+            return jsonResult;
         }
         String redisValue = RedisUtil.getRedisValue(redisKey);
         if (StringUtil.isEmpty(redisValue)) {
             jsonResult.put(ConstKey.devices, "none");
             return jsonResult;
         }
-        System.out.println(redisValue);
         JSONArray jsonDevList = JSON.parseArray(redisValue);
         jsonResult.put(ConstKey.devices, jsonDevList);
         return jsonResult;

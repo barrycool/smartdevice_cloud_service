@@ -24,19 +24,14 @@ public class RedisUtil {
     public static String getUserId(JSONObject jsonReq){
         String userId = jsonReq.getString(ConstKey.userId);
         if(StringUtil.isEmpty(userId)){
-//            String redisKeyUserToken = getRedisKey_UserToken(jsonReq);
-//            userId = getRedisValue(redisKeyUserToken);
-            userId = jsonReq.getString(ConstKey.token);
+            String redisKeyUserToken = getRedisKey_UserToken(jsonReq);
+            userId = getRedisValue(redisKeyUserToken);
         }
         return userId;
     }
 
     public static String getRedisKey_DevStatus(JSONObject jsonReq){
-//        String userId = getUserId(jsonReq);
         String deviceId = jsonReq.getString(ConstKey.deviceId);
-//        if(userId==null || deviceId==null || userId.length()==0 || deviceId.length()==0){
-//            return null;
-//        }
         if(StringUtil.isEmpty(deviceId)){
             return null;
         }
@@ -61,14 +56,6 @@ public class RedisUtil {
             return null;
         }
         return ConstKey.redis_key_prefix_user_token +  token;
-    }
-
-    public static String getRedisKey_UserIdToken(JSONObject jsonReq){
-        String userId = jsonReq.getString(ConstKey.userId);
-        if(StringUtil.isEmpty(userId)){
-            return null;
-        }
-        return ConstKey.redis_key_prefix_user_id_token +  userId;
     }
 
     public static String getRedisKey_UserId(JSONObject jsonReq){

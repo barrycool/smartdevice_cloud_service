@@ -23,9 +23,6 @@ public class ConstKey {
     public static final String redis_key_prefix_user_token = "user_token:";
     public static final int user_token_over_time = 3600*24*2;
 
-    public static final String redis_key_prefix_user_id_token = "user_id_token:";
-    public static final int user_id_token_over_time = 3600*24*2;
-
 
     //rediskey前缀:user_id对应用户信息
     public static final String redis_key_prefix_user_id = "user_id:";
