@@ -26,7 +26,7 @@
     </servlet>
     <servlet>
         <servlet-name>mng</servlet-name>
-        <servlet-class>servlet.DeviceManageServlet</servlet-class>
+        <servlet-class>servlet.ManageServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
         <async-supported>true</async-supported>
     </servlet>
