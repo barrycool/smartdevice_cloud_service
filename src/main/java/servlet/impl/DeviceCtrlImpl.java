@@ -110,15 +110,15 @@ public class DeviceCtrlImpl {
         jsonHealth.put(ConstKey.value, healthValue);
         jsonHealth.put(ConstKey.nameSpace, "Alexa.EndpointHealth");
 
-        JSONArray jsonProperties = new JSONArray();
-        jsonProperties.add(jsonResponse);
-        jsonProperties.add(jsonHealth);
+//        JSONArray jsonProperties = new JSONArray();
+//        jsonProperties.add(jsonResponse);
+//        jsonProperties.add(jsonHealth);
 
         JSONObject jsonResult = new JSONObject();
         jsonResult.put(ConstKey.deviceId, jsonReq.getString(ConstKey.deviceId));
         jsonResult.put(ConstKey.nameSpace, "Alexa");
         jsonResult.put(ConstKey.name, "Response");
-        jsonResult.put(ConstKey.properties, jsonProperties);
+//        jsonResult.put(ConstKey.properties, jsonProperties);
 
         return jsonResult;
     }
