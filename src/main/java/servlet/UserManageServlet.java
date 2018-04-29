@@ -18,8 +18,8 @@ import java.io.*;
 /**
  * Created by fanyuanyuan on 2018/3/17.
  */
-public class UserCtrlServlet extends HttpServlet {
-    private static final Logger logger = LoggerFactory.getLogger(UserCtrlServlet.class);
+public class UserManageServlet extends HttpServlet {
+    private static final Logger logger = LoggerFactory.getLogger(UserManageServlet.class);
 
 
     private UserCtrlImpl userCtrl = UserCtrlImpl.getUserCtrl();

@@ -25,18 +25,15 @@
         <servlet-class>servlet.DeviceCtrlServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>set</servlet-name>
-        <servlet-class>servlet.DeviceSetServlet</servlet-class>
+        <servlet-name>device_mng</servlet-name>
+        <servlet-class>servlet.DeviceManageServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
         <async-supported>true</async-supported>
     </servlet>
     <servlet>
-        <servlet-name>get</servlet-name>
-        <servlet-class>servlet.DeviceGetServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>user_ctrl</servlet-name>
-        <servlet-class>servlet.UserCtrlServlet</servlet-class>
+        <servlet-name>user_mng</servlet-name>
+        <servlet-class>servlet.UserManageServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet-mapping>
@@ -44,15 +41,11 @@
         <url-pattern>/ctrl</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>set</servlet-name>
-        <url-pattern>/set</url-pattern>
+        <servlet-name>device_mng</servlet-name>
+        <url-pattern>/device_mng</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>get</servlet-name>
-        <url-pattern>/get</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>user_ctrl</servlet-name>
-        <url-pattern>/user_ctrl</url-pattern>
+        <servlet-name>user_mng</servlet-name>
+        <url-pattern>/user_mng</url-pattern>
     </servlet-mapping>
 </web-app>

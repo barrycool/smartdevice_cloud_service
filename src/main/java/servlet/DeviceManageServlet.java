@@ -5,8 +5,6 @@ import log.SaveTraceLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import servlet.impl.DeviceCtrlImpl;
-import servlet.impl.UserCtrlImpl;
-import servlet.test.TcpServer;
 import util.ConstKey;
 import util.PrintUtil;
 
@@ -19,8 +17,8 @@ import java.io.*;
 /**
  * Created by yuanyuanfan on 2018/1/23.
  */
-public class DeviceSetServlet extends HttpServlet {
-    private static final Logger logger = LoggerFactory.getLogger(DeviceSetServlet.class);
+public class DeviceManageServlet extends HttpServlet {
+    private static final Logger logger = LoggerFactory.getLogger(DeviceManageServlet.class);
 
     private DeviceCtrlImpl deviceCtrl =  DeviceCtrlImpl.getInstance();
 
@@ -34,6 +32,8 @@ public class DeviceSetServlet extends HttpServlet {
                 case "Alexa.PowerController":
                     queryResult = deviceCtrl.setDevStatus(jsonReq);
                     break;
+                case "Alexa":
+                    queryResult = deviceCtrl.getDevStatus(jsonReq);
                 default:
                     break;
 

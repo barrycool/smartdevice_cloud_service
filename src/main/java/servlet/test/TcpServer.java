@@ -75,13 +75,13 @@ public class TcpServer {
             if(myTcpHandler==null){
                 return null;
             }
-            send(myTcpHandler, jsonReq);
             String cmd = jsonReq.getString(ConstKey.name);
             if(cmd.equals("TurnOn")){
                 cmd = "ON";
             }else if(cmd.equals("TurnOff")){
                 cmd = "OFF";
             }
+            send(myTcpHandler, jsonReq);
             setDeviceStatus(deviceId, cmd);
             return myTcpHandler.recv();
         } catch (Exception e) {
