@@ -118,6 +118,7 @@ public class DeviceCtrlImpl {
         jsonResult.put(ConstKey.deviceId, jsonReq.getString(ConstKey.deviceId));
         jsonResult.put(ConstKey.nameSpace, "Alexa");
         jsonResult.put(ConstKey.name, "Response");
+        jsonResult.fluentPutAll(jsonResponse);
 //        jsonResult.put(ConstKey.properties, jsonProperties);
 
         return jsonResult;
