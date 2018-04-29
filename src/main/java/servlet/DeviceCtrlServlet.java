@@ -40,6 +40,8 @@ public class DeviceCtrlServlet extends HttpServlet {
                 case "Alexa.PowerController":
                     queryResult = deviceCtrl.setDevStatus(jsonReq);
                     break;
+                case "Alexa":
+                    queryResult = deviceCtrl.getDevStatus(jsonReq);
                 default:
                     break;
             }
