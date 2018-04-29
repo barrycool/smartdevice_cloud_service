@@ -25,27 +25,17 @@
         <servlet-class>servlet.DeviceCtrlServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>device_mng</servlet-name>
+        <servlet-name>mng</servlet-name>
         <servlet-class>servlet.DeviceManageServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
         <async-supported>true</async-supported>
     </servlet>
-    <servlet>
-        <servlet-name>user_mng</servlet-name>
-        <servlet-class>servlet.UserManageServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-
     <servlet-mapping>
         <servlet-name>ctrl</servlet-name>
         <url-pattern>/ctrl</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>device_mng</servlet-name>
-        <url-pattern>/device_mng</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>user_mng</servlet-name>
-        <url-pattern>/user_mng</url-pattern>
+        <servlet-name>mng</servlet-name>
+        <url-pattern>/mng</url-pattern>
     </servlet-mapping>
 </web-app>
