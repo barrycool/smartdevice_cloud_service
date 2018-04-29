@@ -5,6 +5,7 @@ import log.SaveTraceLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import servlet.impl.DeviceCtrlImpl;
+import servlet.impl.UserCtrlImpl;
 import util.ConstKey;
 import util.PrintUtil;
 
@@ -21,6 +22,8 @@ public class DeviceManageServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DeviceManageServlet.class);
 
     private DeviceCtrlImpl deviceCtrl =  DeviceCtrlImpl.getInstance();
+    private UserCtrlImpl userCtrl = UserCtrlImpl.getUserCtrl();
+
 
     protected JSONObject processRequest(JSONObject jsonReq)
             throws ServletException, IOException {
@@ -34,6 +37,18 @@ public class DeviceManageServlet extends HttpServlet {
                     break;
                 case "Alexa":
                     queryResult = deviceCtrl.getDevStatus(jsonReq);
+                case "AccountManagement":
+                    queryResult = userCtrl.userCtrl(jsonReq);
+                    break;
+                case "DeviceManagement":
+                    queryResult = userCtrl.addDevice(jsonReq);
+                    break;
+                case "Alexa.Discovery":
+                    queryResult = userCtrl.discovery(jsonReq);
+                    break;
+                case "Oauth":
+                    queryResult = userCtrl.setUserToken(jsonReq);
+                    break;
                 default:
                     break;
 

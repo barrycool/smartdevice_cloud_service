@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import log.SaveTraceLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import servlet.impl.DeviceCtrlImpl;
 import servlet.impl.UserCtrlImpl;
 import util.ConstKey;
 import util.PrintUtil;
@@ -23,6 +24,8 @@ public class UserManageServlet extends HttpServlet {
 
 
     private UserCtrlImpl userCtrl = UserCtrlImpl.getUserCtrl();
+    private DeviceCtrlImpl deviceCtrl =  DeviceCtrlImpl.getInstance();
+
 
     protected JSONObject processRequest(JSONObject jsonReq)
             throws ServletException, IOException {
@@ -34,6 +37,11 @@ public class UserManageServlet extends HttpServlet {
                 return null;
             }
             switch (nameSpace){
+                case "Alexa.PowerController":
+                    queryResult = deviceCtrl.setDevStatus(jsonReq);
+                    break;
+                case "Alexa":
+                    queryResult = deviceCtrl.getDevStatus(jsonReq);
                 case "AccountManagement":
                     queryResult = userCtrl.userCtrl(jsonReq);
                     break;
