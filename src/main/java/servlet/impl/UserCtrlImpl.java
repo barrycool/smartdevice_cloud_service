@@ -385,7 +385,7 @@ public class UserCtrlImpl {
 
         String userId = jsonReq.getString(ConstKey.userId);
         if(StringUtil.isEmpty(userId)){
-            userId  = RedisUtil.getUserId(jsonReq);
+            userId  = RedisUtil.getUserIdByToken(jsonReq);
         }
         String redisKey = RedisUtil.getRedisKey_DevList(userId);
         if (StringUtil.isEmpty(redisKey)) {

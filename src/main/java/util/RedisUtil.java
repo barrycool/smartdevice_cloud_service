@@ -21,7 +21,7 @@ public class RedisUtil {
         return redisClient.get(redisKey);
     }
 
-    public static String getUserId(JSONObject jsonReq){
+    public static String getUserIdByToken(JSONObject jsonReq){
         String userId = jsonReq.getString(ConstKey.userId);
         if(StringUtil.isEmpty(userId)){
             String redisKeyUserToken = getRedisKey_UserToken(jsonReq);
