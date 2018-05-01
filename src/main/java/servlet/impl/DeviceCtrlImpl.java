@@ -139,9 +139,11 @@ public class DeviceCtrlImpl {
             }
         }
         JSONObject jsonHealth = new JSONObject();
-        jsonHealth.put(ConstKey.name, "connectivity");
-        jsonHealth.put(ConstKey.value, healthValue);
         jsonHealth.put(ConstKey.nameSpace, "Alexa.EndpointHealth");
+        jsonHealth.put(ConstKey.name, "connectivity");
+        JSONObject connectivityValue = new JSONObject();
+        connectivityValue.put(ConstKey.value, healthValue);
+        jsonHealth.put(ConstKey.value, connectivityValue);
 
         JSONArray jsonProperties = new JSONArray();
         jsonProperties.add(jsonResponse);
