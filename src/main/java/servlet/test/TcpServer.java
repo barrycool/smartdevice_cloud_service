@@ -90,6 +90,21 @@ public class TcpServer {
         return null;
     }
 
+    public JSONObject onEvent_getSwitch(JSONObject jsonReq) {
+        try {
+            String deviceId = jsonReq.getString(ConstKey.deviceId);
+            MyTcpHandler myTcpHandler = mapTcpHandler.get(deviceId);
+            if(myTcpHandler==null){
+                return null;
+            }
+            send(myTcpHandler, jsonReq);
+            return myTcpHandler.recv();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     public void send(MyTcpHandler myTcpHandler, JSONObject jsonReq) {
         try {

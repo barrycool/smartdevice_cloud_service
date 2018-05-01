@@ -124,35 +124,68 @@ public class DeviceCtrlImpl {
     }
 
     public JSONObject getDevStatus(JSONObject jsonReq){
-        JSONObject jsonCtrl = new JSONObject();
-        String redisKey = RedisUtil.getRedisKey_DevStatus(jsonReq);
-        String redisValue = RedisUtil.getRedisValue(redisKey);
+        JSONObject jsonResponse = new JSONObject();
+        String deviceId = jsonReq.getString(ConstKey.deviceId);
+        String redisKey_connect = RedisUtil.getRedisKey_DevConnectStatus(deviceId);
         String healthValue = "OK";
-        jsonCtrl.put(ConstKey.value, redisValue);
-        if(StringUtil.isEmpty(redisValue)){
-            jsonCtrl.put(ConstKey.value, "OFF");
-            healthValue = "UNREACHABLE";
-        }
-        jsonCtrl.put(ConstKey.name, jsonReq.getString(ConstKey.name));
-        jsonCtrl.put(ConstKey.nameSpace, "Alexa.PowerController");
 
+        String connectStatus = RedisTools.get(redisKey_connect);
+        if(StringUtil.isEmpty(connectStatus) || connectStatus.equals(ConstKey.offLine)){
+            healthValue = "UNREACHABLE";
+        }else{
+            jsonResponse = tcpServer.onEvent_getSwitch(jsonReq);
+            if(jsonResponse==null || jsonResponse.size()==0){
+                healthValue = "UNREACHABLE";
+            }
+        }
         JSONObject jsonHealth = new JSONObject();
         jsonHealth.put(ConstKey.name, "connectivity");
         jsonHealth.put(ConstKey.value, healthValue);
         jsonHealth.put(ConstKey.nameSpace, "Alexa.EndpointHealth");
 
         JSONArray jsonProperties = new JSONArray();
-        jsonProperties.add(jsonCtrl);
+        jsonProperties.add(jsonResponse);
         jsonProperties.add(jsonHealth);
 
         JSONObject jsonResult = new JSONObject();
-        jsonResult.put(ConstKey.deviceId, jsonReq.getString(ConstKey.deviceId));
+        jsonResult.put(ConstKey.deviceId, deviceId);
         jsonResult.put(ConstKey.nameSpace, "Alexa");
         jsonResult.put(ConstKey.name, "Response");
         jsonResult.put(ConstKey.properties, jsonProperties);
 
         return jsonResult;
     }
+
+//    public JSONObject getDevStatus(JSONObject jsonReq){
+//        JSONObject jsonCtrl = new JSONObject();
+//        String redisKey = RedisUtil.getRedisKey_DevStatus(jsonReq);
+//        String redisValue = RedisUtil.getRedisValue(redisKey);
+//        String healthValue = "OK";
+//        jsonCtrl.put(ConstKey.value, redisValue);
+//        if(StringUtil.isEmpty(redisValue)){
+//            jsonCtrl.put(ConstKey.value, "OFF");
+//            healthValue = "UNREACHABLE";
+//        }
+//        jsonCtrl.put(ConstKey.name, jsonReq.getString(ConstKey.name));
+//        jsonCtrl.put(ConstKey.nameSpace, "Alexa.PowerController");
+//
+//        JSONObject jsonHealth = new JSONObject();
+//        jsonHealth.put(ConstKey.name, "connectivity");
+//        jsonHealth.put(ConstKey.value, healthValue);
+//        jsonHealth.put(ConstKey.nameSpace, "Alexa.EndpointHealth");
+//
+//        JSONArray jsonProperties = new JSONArray();
+//        jsonProperties.add(jsonCtrl);
+//        jsonProperties.add(jsonHealth);
+//
+//        JSONObject jsonResult = new JSONObject();
+//        jsonResult.put(ConstKey.deviceId, jsonReq.getString(ConstKey.deviceId));
+//        jsonResult.put(ConstKey.nameSpace, "Alexa");
+//        jsonResult.put(ConstKey.name, "Response");
+//        jsonResult.put(ConstKey.properties, jsonProperties);
+//
+//        return jsonResult;
+//    }
 
     public static void main(String[] argc){
         DeviceCtrlImpl deviceCtrl = new DeviceCtrlImpl();
