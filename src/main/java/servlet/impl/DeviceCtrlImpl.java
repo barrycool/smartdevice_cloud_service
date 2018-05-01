@@ -124,6 +124,51 @@ public class DeviceCtrlImpl {
     }
 
     public JSONObject getDevStatus(JSONObject jsonReq){
+        JSONObject jsonCtrl = new JSONObject();
+        String deviceId = jsonReq.getString(ConstKey.deviceId);
+        String redisKey_connect = RedisUtil.getRedisKey_DevConnectStatus(deviceId);
+        //String redisKey = RedisUtil.getRedisKey_DevStatus(jsonReq);
+        String redisValue; // = RedisUtil.getRedisValue(redisKey);
+        String healthValue = "OK";
+
+        String connectStatus = RedisTools.get(redisKey_connect);
+        if(StringUtil.isEmpty(connectStatus) || connectStatus.equals(ConstKey.offLine)){
+            redisValue = "OFF";
+            healthValue = "UNREACHABLE";
+        }else{
+            JSONObject tmp  = tcpServer.onEvent_getSwitch(jsonReq);
+            if(tmp==null || tmp.size()==0){
+                redisValue = "OFF";
+                healthValue = "UNREACHABLE";
+            }
+            else {
+                return tmp;
+            }
+        }
+
+        jsonCtrl.put(ConstKey.value, redisValue);
+        jsonCtrl.put(ConstKey.name, jsonReq.getString(ConstKey.name));
+        jsonCtrl.put(ConstKey.nameSpace, "Alexa.PowerController");
+
+        JSONObject jsonHealth = new JSONObject();
+        jsonHealth.put(ConstKey.name, "connectivity");
+        jsonHealth.put(ConstKey.value, healthValue);
+        jsonHealth.put(ConstKey.nameSpace, "Alexa.EndpointHealth");
+
+        JSONArray jsonProperties = new JSONArray();
+        jsonProperties.add(jsonCtrl);
+        jsonProperties.add(jsonHealth);
+
+        JSONObject jsonResult = new JSONObject();
+        jsonResult.put(ConstKey.deviceId, jsonReq.getString(ConstKey.deviceId));
+        jsonResult.put(ConstKey.nameSpace, "Alexa");
+        jsonResult.put(ConstKey.name, "Response");
+        jsonResult.put(ConstKey.properties, jsonProperties);
+
+        return jsonResult;
+    }
+
+    /*public JSONObject getDevStatus(JSONObject jsonReq){
         JSONObject jsonResponse = new JSONObject();
         String deviceId = jsonReq.getString(ConstKey.deviceId);
         String redisKey_connect = RedisUtil.getRedisKey_DevConnectStatus(deviceId);
@@ -156,7 +201,7 @@ public class DeviceCtrlImpl {
         jsonResult.put(ConstKey.properties, jsonProperties);
 
         return jsonResult;
-    }
+    }*/
 
 //    public JSONObject getDevStatus(JSONObject jsonReq){
 //        JSONObject jsonCtrl = new JSONObject();
