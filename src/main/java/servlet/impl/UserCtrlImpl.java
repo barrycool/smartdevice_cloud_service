@@ -432,7 +432,7 @@ public class UserCtrlImpl {
         String userId = jsonReq.getString(ConstKey.userId);
         if (!StringUtil.isEmpty(userId)) {
             String redisKey_userId_devList = RedisUtil.getRedisKey_DevList(userId);
-            setRedisDeviceList(redisKey_userId_devList, jsonReq);
+            updateRedisDeviceList(redisKey_userId_devList, jsonReq);
         }
 
         JSONObject queryResult = new JSONObject();
