@@ -364,37 +364,31 @@ public class UserCtrlImpl {
         return deleteJsonArray.toJSONString();
     }
 
-    public void addRedisDeviceList(String redisKey, JSONObject jsonReq) {
+    public String addRedisDeviceList(String redisKey, JSONObject jsonReq) {
         String redisValue = RedisUtil.getRedisValue(redisKey);
         String v = addDevice(redisValue, jsonReq);
-        if (!StringUtil.isEmpty(v)) {
-            RedisTools.set(redisKey, v, ConstKey.user_device_list_over_time);
-        }
+        return RedisTools.set(redisKey, v, ConstKey.user_device_list_over_time);
     }
 
-
-    public void deleteRedisDeviceList(String redisKey, JSONObject jsonReq) {
+    public String deleteRedisDeviceList(String redisKey, JSONObject jsonReq) {
         String redisValue = RedisUtil.getRedisValue(redisKey);
         String v = deleteDevice(redisValue, jsonReq);
-        if (!StringUtil.isEmpty(v)) {
-            RedisTools.set(redisKey, v, ConstKey.user_device_list_over_time);
-        }
+        return RedisTools.set(redisKey, v, ConstKey.user_device_list_over_time);
     }
-    public void updateRedisDeviceList(String redisKey, JSONObject jsonReq) {
+    public String updateRedisDeviceList(String redisKey, JSONObject jsonReq) {
         String redisValue = RedisUtil.getRedisValue(redisKey);
         String v = updateDeviceInfo(redisValue, jsonReq);
-        if (!StringUtil.isEmpty(v)) {
-            RedisTools.set(redisKey, v, ConstKey.user_device_list_over_time);
-        }
+        return RedisTools.set(redisKey, v, ConstKey.user_device_list_over_time);
     }
 
 
     public JSONObject addDevice(JSONObject jsonReq) {
 
+        String status = ConstKey.Failed;
         String userId = jsonReq.getString(ConstKey.userId);
         if (!StringUtil.isEmpty(userId)) {
             String redisKey_userId_devList = RedisUtil.getRedisKey_DevList(userId);
-            addRedisDeviceList(redisKey_userId_devList, jsonReq);
+            status = addRedisDeviceList(redisKey_userId_devList, jsonReq);
         }
 
         JSONObject queryResult = new JSONObject();
@@ -402,17 +396,25 @@ public class UserCtrlImpl {
         queryResult.put(ConstKey.name, "AddDevice.Response");
 
         JSONObject jsonResult = new JSONObject();
-        jsonResult.put(ConstKey.code, "OK");
+        jsonResult.put(ConstKey.code, status);
         jsonResult.put(ConstKey.msg, "add device successfully");
+
+        if(status.equals(ConstKey.OK)){
+            jsonResult.put(ConstKey.msg, "add device successfully");
+        }else{
+            jsonResult.put(ConstKey.msg, "add device failed");
+        }
+
         queryResult.put(ConstKey.result, jsonResult);
         return queryResult;
     }
 
     public JSONObject deleteDevice(JSONObject jsonReq) {
         String userId = jsonReq.getString(ConstKey.userId);
+        String status = ConstKey.Failed;
         if (!StringUtil.isEmpty(userId)) {
             String redisKey_userId_devList = RedisUtil.getRedisKey_DevList(userId);
-            deleteRedisDeviceList(redisKey_userId_devList, jsonReq);
+            status = deleteRedisDeviceList(redisKey_userId_devList, jsonReq);
         }
 
         JSONObject queryResult = new JSONObject();
@@ -420,17 +422,23 @@ public class UserCtrlImpl {
         queryResult.put(ConstKey.name, "DeleteDevice.Response");
 
         JSONObject jsonResult = new JSONObject();
-        jsonResult.put(ConstKey.code, "OK");
+        jsonResult.put(ConstKey.code, status);
         jsonResult.put(ConstKey.msg, "delete device successfully");
+        if(status.equals(ConstKey.OK)){
+            jsonResult.put(ConstKey.msg, "delete device successfully");
+        }else{
+            jsonResult.put(ConstKey.msg, "delete device failed");
+        }
         queryResult.put(ConstKey.result, jsonResult);
         return queryResult;
     }
 
     public JSONObject updateDevice(JSONObject jsonReq) {
         String userId = jsonReq.getString(ConstKey.userId);
+        String status = ConstKey.Failed;
         if (!StringUtil.isEmpty(userId)) {
             String redisKey_userId_devList = RedisUtil.getRedisKey_DevList(userId);
-            updateRedisDeviceList(redisKey_userId_devList, jsonReq);
+            status = updateRedisDeviceList(redisKey_userId_devList, jsonReq);
         }
 
         JSONObject queryResult = new JSONObject();
@@ -438,8 +446,12 @@ public class UserCtrlImpl {
         queryResult.put(ConstKey.name, "UpdateDevice.Response");
 
         JSONObject jsonResult = new JSONObject();
-        jsonResult.put(ConstKey.code, "OK");
-        jsonResult.put(ConstKey.msg, "update device successfully");
+        jsonResult.put(ConstKey.code, status);
+        if(status.equals(ConstKey.OK)){
+            jsonResult.put(ConstKey.msg, "update device successfully");
+        }else{
+            jsonResult.put(ConstKey.msg, "update device failed");
+        }
         queryResult.put(ConstKey.result, jsonResult);
         return queryResult;
     }
