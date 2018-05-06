@@ -311,7 +311,7 @@ public class UserCtrlImpl {
         try {
             for (Object obj : jsonArray) {
                 JSONObject existDevice = (JSONObject) obj;
-                if (existDevice.get(ConstKey.deviceId).equals(deviceInfo.get(ConstKey.deviceId))) {
+                if (existDevice.getString(ConstKey.deviceId).equals(deviceInfo.getString(ConstKey.deviceId))) {
                     return jsonArray.toJSONString();
                 }
             }
@@ -332,8 +332,8 @@ public class UserCtrlImpl {
         try {
             for (Object obj : jsonArray) {
                 JSONObject existDevice = (JSONObject) obj;
-                if (existDevice.get(ConstKey.deviceId).equals(updateDeviceInfo.get(ConstKey.deviceId))) {
-                    existDevice.fluentPutAll(updateDeviceInfo);
+                if (existDevice.getString(ConstKey.deviceId).equals(updateDeviceInfo.getString(ConstKey.deviceId))) {
+                    existDevice.putAll(updateDeviceInfo);
                 }
                 updateJsonArray.add(existDevice);
             }
@@ -348,12 +348,12 @@ public class UserCtrlImpl {
             return null;
         }
         JSONArray jsonArray = JSON.parseArray(redisValue);
-        JSONArray deleteJsonArray = JSON.parseArray(redisValue);
+        JSONArray deleteJsonArray = new JSONArray();
         String deleteId = jsonReq.getString(ConstKey.deviceId);
         try {
             for (Object obj : jsonArray) {
                 JSONObject existDevice = (JSONObject) obj;
-                if (existDevice.get(ConstKey.deviceId).equals(deleteId)) {
+                if (existDevice.getString(ConstKey.deviceId).equals(deleteId)) {
                     continue;
                 }
                 deleteJsonArray.add(existDevice);
