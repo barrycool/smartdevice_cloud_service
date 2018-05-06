@@ -39,9 +39,7 @@ public class RedisTools extends Thread{
     }
 
     public static void main(String[] argc){
-        JSONObject jsonUserInfo = new JSONObject();
-        jsonUserInfo.put("token", "2222");
-        String redisKey_userInfo = RedisUtil.getRedisKey_DevList("4e3a350ef7d0948a9f82a9431cc29e63");
+        String redisKey_userInfo = RedisUtil.getRedisKey_UserInfo("4e3a350ef7d0948a9f82a9431cc29e63");
         System.out.println(RedisTools.get(redisKey_userInfo));
     }
 }

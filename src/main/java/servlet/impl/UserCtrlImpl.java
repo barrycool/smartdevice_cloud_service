@@ -70,6 +70,10 @@ public class UserCtrlImpl {
     public JSONObject packUserInfo(JSONObject jsonReq) {
         JSONObject jsonUserInfo = new JSONObject();
         try {
+            String userId = jsonReq.getString(ConstKey.userId);
+            if(!StringUtil.isEmpty(userId)){
+                jsonUserInfo.put(ConstKey.userId, userId);
+            }
             String userName = jsonReq.getString(ConstKey.userName);
             if(!StringUtil.isEmpty(userName)){
                 jsonUserInfo.put(ConstKey.userName, userName);
@@ -247,12 +251,11 @@ public class UserCtrlImpl {
             queryResult.put(ConstKey.result, jsonResult);
             return queryResult;
         }
-
         JSONObject jsonExistUserInfo = JSON.parseObject(userInfo);
         jsonExistUserInfo.putAll(jsonUserInfo);
-        jsonExistUserInfo.remove(ConstKey.RegisterCode);
-        updateMongoUserInfo(jsonExistUserInfo);
+
         addUserRedis(jsonExistUserInfo);
+        updateMongoUserInfo(jsonExistUserInfo);
 
         jsonResult.put(ConstKey.code, ConstKey.OK);
         jsonResult.put(ConstKey.msg, "update user ok!!!");
@@ -274,27 +277,36 @@ public class UserCtrlImpl {
     }
 
     public boolean addUserRedis(JSONObject jsonUserInfo) {
-        String redisKey_userInfo = RedisUtil.getRedisKey_UserInfo(jsonUserInfo);
-        String v = jsonUserInfo.toJSONString();
-        RedisTools.set(redisKey_userInfo, v, ConstKey.user_id_over_time);
+        try{
+            String redisKey_userInfo = RedisUtil.getRedisKey_UserInfo(jsonUserInfo);
+            String v = jsonUserInfo.toJSONString();
+            RedisTools.set(redisKey_userInfo, v, ConstKey.user_id_over_time);
 
-        String userPhone = jsonUserInfo.getString(ConstKey.userPhone);
-        if(!StringUtil.isEmpty(userPhone)){
-            String redisKey_userPhoneLogin = RedisUtil.getRedisKey_userLogin(userPhone);
-            RedisTools.set(redisKey_userPhoneLogin, v, ConstKey.user_login_name_over_time);
+            String userPhone = jsonUserInfo.getString(ConstKey.userPhone);
+            if(!StringUtil.isEmpty(userPhone)){
+                String redisKey_userPhoneLogin = RedisUtil.getRedisKey_userLogin(userPhone);
+                RedisTools.set(redisKey_userPhoneLogin, v, ConstKey.user_login_name_over_time);
 
+            }
+            String userMail = jsonUserInfo.getString(ConstKey.userEmail);
+            if(!StringUtil.isEmpty(userMail)){
+                String redisKey_userMailLogin = RedisUtil.getRedisKey_userLogin(userMail);
+                RedisTools.set(redisKey_userMailLogin, v, ConstKey.user_login_name_over_time);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        String userMail = jsonUserInfo.getString(ConstKey.userEmail);
-        if(!StringUtil.isEmpty(userMail)){
-            String redisKey_userMailLogin = RedisUtil.getRedisKey_userLogin(userMail);
-            RedisTools.set(redisKey_userMailLogin, v, ConstKey.user_login_name_over_time);
-        }
+
         return true;
     }
 
 
     public void updateMongoUserInfo(JSONObject jsonUserInfo) {
-        mongoXClient.updateDoc(jsonUserInfo);
+        try{
+            mongoXClient.updateDoc(jsonUserInfo);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 

@@ -158,18 +158,16 @@ public class MongoXClient {
     }
 
     public void updateDoc(JSONObject updateInfo){
-
         String userId = updateInfo.getString(ConstKey.userId);
-
         BasicDBObject queryObj = new BasicDBObject();
-        queryObj.append(ConstKey.userId, userId);
+        queryObj.append("_id", userId);
         String dbName = getDBName();
         if(dbName==null){
             return ;
         }
 
         Document filter = new Document();
-        filter.append(ConstKey.userId, userId);
+        filter.append("_id", userId);
 
         Document updateObj = new Document();
         updateObj.append(ConstKey.userId, userId);
@@ -190,9 +188,8 @@ public class MongoXClient {
             }
         }
 //        UpdateResult result = collect.replaceOne(filter, updateObj);
-        collect.findOneAndUpdate(filter, updateObj);
-//        logger.info("matched count = {}", result.getMatchedCount());
-//        System.out.println("matched count = " +  result.getMatchedCount());
+//        collect.findOneAndUpdate(filter, updateObj);
+        collect.replaceOne(filter, updateObj);
     }
 
     public void insertDoc(Document updateObj){
