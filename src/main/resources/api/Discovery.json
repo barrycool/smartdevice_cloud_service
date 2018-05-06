@@ -11,13 +11,13 @@
       {
         "deviceId": "TV-001",
         "deviecType": "TV",
-        "firendlyName": "TV1",
+        "friendlyName": "TV1",
         "manufacturerName": "Ai-keys Inc"
       },
       {
         "deviceId": "TV-002",
         "deviecType": "TV",
-        "firendlyName": "TV2",
+        "friendlyName": "TV2",
         "manufacturerName": "Ai-keys Inc"
       }
     ]
