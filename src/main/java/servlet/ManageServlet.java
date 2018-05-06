@@ -46,7 +46,7 @@ public class ManageServlet extends HttpServlet {
                     queryResult = userCtrl.userCtrl(jsonReq);
                     break;
                 case "DeviceManagement":
-                    queryResult = userCtrl.addDevice(jsonReq);
+                    queryResult = userCtrl.manageDevice(jsonReq);
                     break;
                 case "Alexa.Discovery":
                     queryResult = userCtrl.discovery(jsonReq);
