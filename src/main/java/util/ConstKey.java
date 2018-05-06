@@ -67,6 +67,8 @@ public class ConstKey {
 
     public static final String  onLine= "1";
     public static final String  offLine= "0";
+    public static final String  Failed= "Failed";
+    public static final String  OK= "OK";
 
 
 

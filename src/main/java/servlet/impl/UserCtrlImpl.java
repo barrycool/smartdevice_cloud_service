@@ -285,39 +285,37 @@ public class UserCtrlImpl {
         String deviceType = jsonReq.getString(ConstKey.deviceType);
         String friendlyName = jsonReq.getString(ConstKey.friendlyName);
         String manufactureName = jsonReq.getString(ConstKey.manufactureName);
-        JSONObject jsonDevice = new JSONObject();
+        JSONObject deviceInfo = new JSONObject();
         if (!StringUtil.isEmpty(deviceId)) {
-            jsonDevice.put(ConstKey.deviceId, deviceId);
+            deviceInfo.put(ConstKey.deviceId, deviceId);
         }
         if (!StringUtil.isEmpty(deviceType)) {
-            jsonDevice.put(ConstKey.deviceType, deviceType);
+            deviceInfo.put(ConstKey.deviceType, deviceType);
         }
         if (!StringUtil.isEmpty(friendlyName)) {
-            jsonDevice.put(ConstKey.friendlyName, friendlyName);
+            deviceInfo.put(ConstKey.friendlyName, friendlyName);
         }
         if (!StringUtil.isEmpty(manufactureName)) {
-            jsonDevice.put(ConstKey.manufactureName, manufactureName);
+            deviceInfo.put(ConstKey.manufactureName, manufactureName);
         }
-
-
-        return jsonDevice;
+        return deviceInfo;
     }
 
 
     public String addDevice(String redisValue, JSONObject jsonReq) {
         JSONArray jsonArray = new JSONArray();
-        JSONObject jsonDeviceInfo = packDeviceInfo(jsonReq);
+        JSONObject deviceInfo = packDeviceInfo(jsonReq);
         if (!StringUtil.isEmpty(redisValue)) {
             jsonArray = JSON.parseArray(redisValue);
         }
         try {
             for (Object obj : jsonArray) {
                 JSONObject existDevice = (JSONObject) obj;
-                if (existDevice.get(ConstKey.deviceId).equals(jsonDeviceInfo.get(ConstKey.deviceId))) {
+                if (existDevice.get(ConstKey.deviceId).equals(deviceInfo.get(ConstKey.deviceId))) {
                     return jsonArray.toJSONString();
                 }
             }
-            jsonArray.add(jsonDeviceInfo);
+            jsonArray.add(deviceInfo);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -327,16 +325,15 @@ public class UserCtrlImpl {
     public String updateDeviceInfo(String redisValue, JSONObject jsonReq) {
         JSONArray jsonArray = new JSONArray();
         JSONArray updateJsonArray = new JSONArray();
-        JSONObject jsonDeviceInfo = packDeviceInfo(jsonReq);
+        JSONObject updateDeviceInfo = packDeviceInfo(jsonReq);
         if (!StringUtil.isEmpty(redisValue)) {
             jsonArray = JSON.parseArray(redisValue);
         }
         try {
             for (Object obj : jsonArray) {
                 JSONObject existDevice = (JSONObject) obj;
-                if (existDevice.get(ConstKey.deviceId).equals(jsonDeviceInfo.get(ConstKey.deviceId))) {
-                    updateJsonArray.add(jsonDeviceInfo);
-                    continue;
+                if (existDevice.get(ConstKey.deviceId).equals(updateDeviceInfo.get(ConstKey.deviceId))) {
+                    existDevice.fluentPutAll(updateDeviceInfo);
                 }
                 updateJsonArray.add(existDevice);
             }
@@ -367,13 +364,14 @@ public class UserCtrlImpl {
         return deleteJsonArray.toJSONString();
     }
 
-    public void setRedisDeviceList(String redisKey, JSONObject jsonReq) {
+    public void addRedisDeviceList(String redisKey, JSONObject jsonReq) {
         String redisValue = RedisUtil.getRedisValue(redisKey);
         String v = addDevice(redisValue, jsonReq);
         if (!StringUtil.isEmpty(v)) {
             RedisTools.set(redisKey, v, ConstKey.user_device_list_over_time);
         }
     }
+
 
     public void deleteRedisDeviceList(String redisKey, JSONObject jsonReq) {
         String redisValue = RedisUtil.getRedisValue(redisKey);
@@ -396,7 +394,7 @@ public class UserCtrlImpl {
         String userId = jsonReq.getString(ConstKey.userId);
         if (!StringUtil.isEmpty(userId)) {
             String redisKey_userId_devList = RedisUtil.getRedisKey_DevList(userId);
-            setRedisDeviceList(redisKey_userId_devList, jsonReq);
+            addRedisDeviceList(redisKey_userId_devList, jsonReq);
         }
 
         JSONObject queryResult = new JSONObject();

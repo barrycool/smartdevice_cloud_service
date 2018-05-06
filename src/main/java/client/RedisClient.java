@@ -6,6 +6,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.ScanResult;
+import util.ConstKey;
 
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +52,7 @@ public class RedisClient {
      */
     public String put(String key, String value, int overtime) {
         Jedis jd = pool.getResource();
-        String status = "";
+        String status = ConstKey.Failed;
         try {
             if (overtime > 0) {
                 status = jd.setex(key, overtime, value);
