@@ -233,14 +233,11 @@ public class UserCtrlImpl {
 
     public JSONObject updateUserInfo(JSONObject jsonUserInfo) {
 
-        String status = ConstKey.Failed;
         JSONObject queryResult = new JSONObject();
         queryResult.put(ConstKey.nameSpace, "AccountManagement");
         queryResult.put(ConstKey.name, "UpdateUser.Response");
 
         JSONObject jsonResult = new JSONObject();
-        jsonResult.put(ConstKey.code, "OK");
-        jsonResult.put(ConstKey.msg, "add user successfully");
 
         String redisKey_userInfo = RedisUtil.getRedisKey_UserInfo(jsonUserInfo);
         String userInfo = RedisTools.get(redisKey_userInfo);
@@ -258,7 +255,7 @@ public class UserCtrlImpl {
         addUserRedis(jsonExistUserInfo);
 
         jsonResult.put(ConstKey.code, ConstKey.OK);
-        jsonResult.put(ConstKey.msg, "update userinfo ok!!!");
+        jsonResult.put(ConstKey.msg, "update user ok!!!");
         queryResult.put(ConstKey.result, jsonResult);
 
         return queryResult;
