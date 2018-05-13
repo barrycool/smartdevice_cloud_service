@@ -1,6 +1,7 @@
 package servlet.impl;
 
 import client.MongoXClient;
+import client.RedisFactory;
 import client.RedisTools;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -38,32 +39,29 @@ public class UserCtrlImpl {
         return userCtrl;
     }
 
-    private UserCtrlImpl() {
-    }
+    private UserCtrlImpl() {}
 
     public JSONObject sendCode(JSONObject jsonReq) {
         JSONObject queryResult = new JSONObject();
         queryResult.put(ConstKey.nameSpace, jsonReq.getString(ConstKey.nameSpace));
         queryResult.put(ConstKey.name, "RequestRegisterCode.Response");
         JSONObject jsonResult = new JSONObject();
-        jsonResult.put(ConstKey.code, "failed");
+        jsonResult.put(ConstKey.code, ConstKey.Failed);
         jsonResult.put(ConstKey.msg, "send register code failed");
-        String userMailAddr = jsonReq.getString(ConstKey.userAccount);
+        String userAccount = jsonReq.getString(ConstKey.userAccount);
 
-
-        if (StringUtil.isEmpty(userMailAddr)) {
+        if (StringUtil.isEmpty(userAccount)) {
             queryResult.put(ConstKey.result, jsonResult);
             return queryResult;
         }
 
-
-        String code = MailSender.sendEmail(userMailAddr);
+        String code = MailSender.sendEmail(userAccount);
         if (code != null) {
-            jsonResult.put(ConstKey.code, "OK");
+            jsonResult.put(ConstKey.code, ConstKey.OK);
             jsonResult.put(ConstKey.msg, "send register code successfully");
             queryResult.put(ConstKey.result, jsonResult);
 
-            String redisKey_sendCode = RedisUtil.getRedisKey_sendCode(userMailAddr);
+            String redisKey_sendCode = RedisUtil.getRedisKey_sendCode(userAccount);
             RedisTools.set(redisKey_sendCode, code, ConstKey.register_code_over_time);
         }
         return queryResult;
@@ -72,14 +70,32 @@ public class UserCtrlImpl {
     public JSONObject packUserInfo(JSONObject jsonReq) {
         JSONObject jsonUserInfo = new JSONObject();
         try {
-            jsonUserInfo.put(ConstKey.userName, jsonReq.getString(ConstKey.userName));
-            jsonUserInfo.put(ConstKey.userPasswd, jsonReq.getString(ConstKey.userPasswd));
-            jsonUserInfo.put(ConstKey.userPhone, jsonReq.getString(ConstKey.userPhone));
-            jsonUserInfo.put(ConstKey.userEmail, jsonReq.getString(ConstKey.userEmail));
-            jsonUserInfo.put(ConstKey.RegisterCode, jsonReq.getString(ConstKey.RegisterCode));
+            String userId = jsonReq.getString(ConstKey.userId);
+            if(!StringUtil.isEmpty(userId)){
+                jsonUserInfo.put(ConstKey.userId, userId);
+            }
+            String userName = jsonReq.getString(ConstKey.userName);
+            if(!StringUtil.isEmpty(userName)){
+                jsonUserInfo.put(ConstKey.userName, userName);
+            }
+            String userPasswd = jsonReq.getString(ConstKey.userPasswd);
+            if(!StringUtil.isEmpty(userPasswd)){
+                jsonUserInfo.put(ConstKey.userPasswd, userPasswd);
+            }
+            String userPhone = jsonReq.getString(ConstKey.userPhone);
+            if(!StringUtil.isEmpty(userPhone)){
+                jsonUserInfo.put(ConstKey.userPhone, userPhone);
+            }
+            String userEmail = jsonReq.getString(ConstKey.userEmail);
+            if(!StringUtil.isEmpty(userEmail)){
+                jsonUserInfo.put(ConstKey.userEmail, userEmail);
+            }
+            String RegisterCode = jsonReq.getString(ConstKey.RegisterCode);
+            if(!StringUtil.isEmpty(RegisterCode)){
+                jsonUserInfo.put(ConstKey.RegisterCode, RegisterCode);
+            }
         } catch (Exception e) {
             e.printStackTrace();
-
         }
         return jsonUserInfo;
     }
@@ -88,14 +104,16 @@ public class UserCtrlImpl {
 
         JSONObject queryResult = new JSONObject();
         String name = jsonReq.getString(ConstKey.name);
-        System.out.println("asd:" + name);
+        JSONObject jsonUserInfo =  packUserInfo(jsonReq);
         switch (name) {
             case "RequestRegisterCode":
                 queryResult = sendCode(jsonReq);
                 break;
             case "AddUser":
-                JSONObject jsonUserInfo = packUserInfo(jsonReq);
                 queryResult = addUser(jsonUserInfo);
+                break;
+            case "UpdateUser":
+                queryResult = updateUserInfo(jsonUserInfo);
                 break;
             case "Login":
                 queryResult = login(jsonReq);
@@ -174,7 +192,7 @@ public class UserCtrlImpl {
         queryResult.put(ConstKey.name, "AddUser.Response");
 
         JSONObject jsonResult = new JSONObject();
-        jsonResult.put(ConstKey.code, "OK");
+        jsonResult.put(ConstKey.code, ConstKey.OK);
         jsonResult.put(ConstKey.msg, "add user successfully");
 
         String sendCode = jsonUserInfo.getString(ConstKey.RegisterCode);
@@ -183,7 +201,7 @@ public class UserCtrlImpl {
         String redisKey_sendCode = RedisUtil.getRedisKey_sendCode(mailInfo);
         String v = RedisTools.get(redisKey_sendCode);
         if (StringUtil.isEmpty(sendCode) || StringUtil.isEmpty(v) || !v.equals(sendCode)) {
-            jsonResult.put(ConstKey.code, "Failed");
+            jsonResult.put(ConstKey.code, ConstKey.Failed);
             jsonResult.put(ConstKey.msg, "register code is error or invalid!!!");
             queryResult.put(ConstKey.result, jsonResult);
             return queryResult;
@@ -203,7 +221,7 @@ public class UserCtrlImpl {
 
         JSONObject jsonExistUserInfo = mongoXClient.getUserInfo(userId);
         if (jsonExistUserInfo != null && jsonExistUserInfo.size() != 0) {
-            jsonResult.put(ConstKey.code, "Failed");
+            jsonResult.put(ConstKey.code, ConstKey.Failed);
             jsonResult.put(ConstKey.msg, "add user has exist!!!");
             queryResult.put(ConstKey.result, jsonResult);
             return queryResult;
@@ -217,6 +235,36 @@ public class UserCtrlImpl {
         return queryResult;
     }
 
+    public JSONObject updateUserInfo(JSONObject jsonUserInfo) {
+
+        JSONObject queryResult = new JSONObject();
+        queryResult.put(ConstKey.nameSpace, "AccountManagement");
+        queryResult.put(ConstKey.name, "UpdateUser.Response");
+
+        JSONObject jsonResult = new JSONObject();
+
+        String redisKey_userInfo = RedisUtil.getRedisKey_UserInfo(jsonUserInfo);
+        String userInfo = RedisTools.get(redisKey_userInfo);
+        if (StringUtil.isEmpty(userInfo)) {
+            jsonResult.put(ConstKey.code, "Failed");
+            jsonResult.put(ConstKey.msg, "update user not exist!!!");
+            queryResult.put(ConstKey.result, jsonResult);
+            return queryResult;
+        }
+        JSONObject jsonExistUserInfo = JSON.parseObject(userInfo);
+        jsonExistUserInfo.putAll(jsonUserInfo);
+
+        addUserRedis(jsonExistUserInfo);
+        updateMongoUserInfo(jsonExistUserInfo);
+
+        jsonResult.put(ConstKey.code, ConstKey.OK);
+        jsonResult.put(ConstKey.msg, "update user ok!!!");
+        queryResult.put(ConstKey.result, jsonResult);
+
+        return queryResult;
+    }
+
+
     public boolean addUserMongo(JSONObject jsonUserInfo) {
         Document userDoc = new Document();
         for (Map.Entry<String, Object> entry : jsonUserInfo.entrySet()) {
@@ -229,27 +277,36 @@ public class UserCtrlImpl {
     }
 
     public boolean addUserRedis(JSONObject jsonUserInfo) {
-        String redisKey_userInfo = RedisUtil.getRedisKey_UserInfo(jsonUserInfo);
-        String v = jsonUserInfo.toJSONString();
-        RedisTools.set(redisKey_userInfo, v, ConstKey.user_id_over_time);
+        try{
+            String redisKey_userInfo = RedisUtil.getRedisKey_UserInfo(jsonUserInfo);
+            String v = jsonUserInfo.toJSONString();
+            RedisTools.set(redisKey_userInfo, v, ConstKey.user_id_over_time);
 
-        String userPhone = jsonUserInfo.getString(ConstKey.userPhone);
-        if(!StringUtil.isEmpty(userPhone)){
-            String redisKey_userPhoneLogin = RedisUtil.getRedisKey_userLogin(userPhone);
-            RedisTools.set(redisKey_userPhoneLogin, v, ConstKey.user_login_name_over_time);
+            String userPhone = jsonUserInfo.getString(ConstKey.userPhone);
+            if(!StringUtil.isEmpty(userPhone)){
+                String redisKey_userPhoneLogin = RedisUtil.getRedisKey_userLogin(userPhone);
+                RedisTools.set(redisKey_userPhoneLogin, v, ConstKey.user_login_name_over_time);
 
+            }
+            String userMail = jsonUserInfo.getString(ConstKey.userEmail);
+            if(!StringUtil.isEmpty(userMail)){
+                String redisKey_userMailLogin = RedisUtil.getRedisKey_userLogin(userMail);
+                RedisTools.set(redisKey_userMailLogin, v, ConstKey.user_login_name_over_time);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        String userMail = jsonUserInfo.getString(ConstKey.userEmail);
-        if(!StringUtil.isEmpty(userMail)){
-            String redisKey_userMailLogin = RedisUtil.getRedisKey_userLogin(userMail);
-            RedisTools.set(redisKey_userMailLogin, v, ConstKey.user_login_name_over_time);
-        }
+
         return true;
     }
 
 
-    public void updateUserInfo(JSONObject jsonUserInfo) {
-        mongoXClient.updateDoc(jsonUserInfo);
+    public void updateMongoUserInfo(JSONObject jsonUserInfo) {
+        try{
+            mongoXClient.updateDoc(jsonUserInfo);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 
@@ -311,7 +368,7 @@ public class UserCtrlImpl {
         try {
             for (Object obj : jsonArray) {
                 JSONObject existDevice = (JSONObject) obj;
-                if (existDevice.get(ConstKey.deviceId).equals(deviceInfo.get(ConstKey.deviceId))) {
+                if (existDevice.getString(ConstKey.deviceId).equals(deviceInfo.getString(ConstKey.deviceId))) {
                     return jsonArray.toJSONString();
                 }
             }
@@ -332,8 +389,8 @@ public class UserCtrlImpl {
         try {
             for (Object obj : jsonArray) {
                 JSONObject existDevice = (JSONObject) obj;
-                if (existDevice.get(ConstKey.deviceId).equals(updateDeviceInfo.get(ConstKey.deviceId))) {
-                    existDevice.fluentPutAll(updateDeviceInfo);
+                if (existDevice.getString(ConstKey.deviceId).equals(updateDeviceInfo.getString(ConstKey.deviceId))) {
+                    existDevice.putAll(updateDeviceInfo);
                 }
                 updateJsonArray.add(existDevice);
             }
@@ -348,12 +405,12 @@ public class UserCtrlImpl {
             return null;
         }
         JSONArray jsonArray = JSON.parseArray(redisValue);
-        JSONArray deleteJsonArray = JSON.parseArray(redisValue);
+        JSONArray deleteJsonArray = new JSONArray();
         String deleteId = jsonReq.getString(ConstKey.deviceId);
         try {
             for (Object obj : jsonArray) {
                 JSONObject existDevice = (JSONObject) obj;
-                if (existDevice.get(ConstKey.deviceId).equals(deleteId)) {
+                if (existDevice.getString(ConstKey.deviceId).equals(deleteId)) {
                     continue;
                 }
                 deleteJsonArray.add(existDevice);
@@ -364,37 +421,31 @@ public class UserCtrlImpl {
         return deleteJsonArray.toJSONString();
     }
 
-    public void addRedisDeviceList(String redisKey, JSONObject jsonReq) {
+    public String addRedisDeviceList(String redisKey, JSONObject jsonReq) {
         String redisValue = RedisUtil.getRedisValue(redisKey);
         String v = addDevice(redisValue, jsonReq);
-        if (!StringUtil.isEmpty(v)) {
-            RedisTools.set(redisKey, v, ConstKey.user_device_list_over_time);
-        }
+        return RedisTools.set(redisKey, v, ConstKey.user_device_list_over_time);
     }
 
-
-    public void deleteRedisDeviceList(String redisKey, JSONObject jsonReq) {
+    public String deleteRedisDeviceList(String redisKey, JSONObject jsonReq) {
         String redisValue = RedisUtil.getRedisValue(redisKey);
         String v = deleteDevice(redisValue, jsonReq);
-        if (!StringUtil.isEmpty(v)) {
-            RedisTools.set(redisKey, v, ConstKey.user_device_list_over_time);
-        }
+        return RedisTools.set(redisKey, v, ConstKey.user_device_list_over_time);
     }
-    public void updateRedisDeviceList(String redisKey, JSONObject jsonReq) {
+    public String updateRedisDeviceList(String redisKey, JSONObject jsonReq) {
         String redisValue = RedisUtil.getRedisValue(redisKey);
         String v = updateDeviceInfo(redisValue, jsonReq);
-        if (!StringUtil.isEmpty(v)) {
-            RedisTools.set(redisKey, v, ConstKey.user_device_list_over_time);
-        }
+        return RedisTools.set(redisKey, v, ConstKey.user_device_list_over_time);
     }
 
 
     public JSONObject addDevice(JSONObject jsonReq) {
 
+        String status = ConstKey.Failed;
         String userId = jsonReq.getString(ConstKey.userId);
         if (!StringUtil.isEmpty(userId)) {
             String redisKey_userId_devList = RedisUtil.getRedisKey_DevList(userId);
-            addRedisDeviceList(redisKey_userId_devList, jsonReq);
+            status = addRedisDeviceList(redisKey_userId_devList, jsonReq);
         }
 
         JSONObject queryResult = new JSONObject();
@@ -405,17 +456,25 @@ public class UserCtrlImpl {
         queryResult.put(ConstKey.friendlyName, jsonReq.getString(ConstKey.friendlyName));
 
         JSONObject jsonResult = new JSONObject();
-        jsonResult.put(ConstKey.code, "OK");
+        jsonResult.put(ConstKey.code, status);
         jsonResult.put(ConstKey.msg, "add device successfully");
+
+        if(status.equals(ConstKey.OK)){
+            jsonResult.put(ConstKey.msg, "add device successfully");
+        }else{
+            jsonResult.put(ConstKey.msg, "add device failed");
+        }
+
         queryResult.put(ConstKey.result, jsonResult);
         return queryResult;
     }
 
     public JSONObject deleteDevice(JSONObject jsonReq) {
         String userId = jsonReq.getString(ConstKey.userId);
+        String status = ConstKey.Failed;
         if (!StringUtil.isEmpty(userId)) {
             String redisKey_userId_devList = RedisUtil.getRedisKey_DevList(userId);
-            deleteRedisDeviceList(redisKey_userId_devList, jsonReq);
+            status = deleteRedisDeviceList(redisKey_userId_devList, jsonReq);
         }
 
         JSONObject queryResult = new JSONObject();
@@ -423,17 +482,23 @@ public class UserCtrlImpl {
         queryResult.put(ConstKey.name, "DeleteDevice.Response");
 
         JSONObject jsonResult = new JSONObject();
-        jsonResult.put(ConstKey.code, "OK");
+        jsonResult.put(ConstKey.code, status);
         jsonResult.put(ConstKey.msg, "delete device successfully");
+        if(status.equals(ConstKey.OK)){
+            jsonResult.put(ConstKey.msg, "delete device successfully");
+        }else{
+            jsonResult.put(ConstKey.msg, "delete device failed");
+        }
         queryResult.put(ConstKey.result, jsonResult);
         return queryResult;
     }
 
     public JSONObject updateDevice(JSONObject jsonReq) {
         String userId = jsonReq.getString(ConstKey.userId);
+        String status = ConstKey.Failed;
         if (!StringUtil.isEmpty(userId)) {
             String redisKey_userId_devList = RedisUtil.getRedisKey_DevList(userId);
-            updateRedisDeviceList(redisKey_userId_devList, jsonReq);
+            status = updateRedisDeviceList(redisKey_userId_devList, jsonReq);
         }
 
         JSONObject queryResult = new JSONObject();
@@ -441,8 +506,12 @@ public class UserCtrlImpl {
         queryResult.put(ConstKey.name, "UpdateDevice.Response");
 
         JSONObject jsonResult = new JSONObject();
-        jsonResult.put(ConstKey.code, "OK");
-        jsonResult.put(ConstKey.msg, "update device successfully");
+        jsonResult.put(ConstKey.code, status);
+        if(status.equals(ConstKey.OK)){
+            jsonResult.put(ConstKey.msg, "update device successfully");
+        }else{
+            jsonResult.put(ConstKey.msg, "update device failed");
+        }
         queryResult.put(ConstKey.result, jsonResult);
         return queryResult;
     }

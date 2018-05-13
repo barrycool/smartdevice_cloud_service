@@ -99,6 +99,13 @@ public class RedisUtil {
         return ConstKey.redis_key_prefix_user_id + userId ;
     }
 
+    public static String getRedisKey_UserInfo(String userId){
+        if(StringUtil.isEmpty(userId)){
+            return null;
+        }
+        return ConstKey.redis_key_prefix_user_id + userId ;
+    }
+
 
     public static String getRedisKey_sendCode(String mailInfo){
         if(StringUtil.isEmpty(mailInfo)){
