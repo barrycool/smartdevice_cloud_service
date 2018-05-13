@@ -400,6 +400,9 @@ public class UserCtrlImpl {
         JSONObject queryResult = new JSONObject();
         queryResult.put(ConstKey.nameSpace, "DeviceManagement");
         queryResult.put(ConstKey.name, "AddDevice.Response");
+        queryResult.put(ConstKey.deviceId, jsonReq.getString(ConstKey.deviceId));
+        queryResult.put(ConstKey.deviceType, jsonReq.getString(ConstKey.deviceType));
+        queryResult.put(ConstKey.friendlyName, jsonReq.getString(ConstKey.friendlyName));
 
         JSONObject jsonResult = new JSONObject();
         jsonResult.put(ConstKey.code, "OK");
