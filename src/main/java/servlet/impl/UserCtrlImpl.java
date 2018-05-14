@@ -342,6 +342,7 @@ public class UserCtrlImpl {
         String deviceType = jsonReq.getString(ConstKey.deviceType);
         String friendlyName = jsonReq.getString(ConstKey.friendlyName);
         String manufactureName = jsonReq.getString(ConstKey.manufactureName);
+        String modelName = jsonReq.getString(ConstKey.modelName);
         JSONObject deviceInfo = new JSONObject();
         if (!StringUtil.isEmpty(deviceId)) {
             deviceInfo.put(ConstKey.deviceId, deviceId);
@@ -354,6 +355,9 @@ public class UserCtrlImpl {
         }
         if (!StringUtil.isEmpty(manufactureName)) {
             deviceInfo.put(ConstKey.manufactureName, manufactureName);
+        }
+        if (!StringUtil.isEmpty(modelName)) {
+            deviceInfo.put(ConstKey.modelName, modelName);
         }
         return deviceInfo;
     }
